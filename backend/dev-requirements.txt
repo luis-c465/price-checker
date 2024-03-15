@@ -1,0 +1,4 @@
+ipykernel==6.29.3
+python-dotenv==1.0.1
+
+-r requirements.txt
