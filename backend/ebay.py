@@ -5,7 +5,7 @@ from typing import Optional
 import requests
 from bs4 import BeautifulSoup
 
-from _types import Condition, PossibleProduct, Product
+from _types import Condition, PossibleProduct
 from util import make_product_dict
 
 

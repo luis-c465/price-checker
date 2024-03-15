@@ -236,3 +236,4 @@ pyrightconfig.json
 *.json
 *.html
 tmp/
+!test/tmp/.gitkeep
