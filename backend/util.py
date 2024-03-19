@@ -1,6 +1,8 @@
+from datetime import datetime
+
 from _types import Condition, Product
 
-
+_EPOCH = datetime(1970, 1, 1)
 def make_product_dict() -> Product:
     return {
         "price": -1,
@@ -13,5 +15,17 @@ def make_product_dict() -> Product:
         "seller_num_ratings": -1,
         "measurements": "",
         "quantity": -1,
-        "description": ""
+        "description": "",
+        "lastUpdatedAt": _EPOCH,
+        "url": None
     }
+
+
+def serialize_product(p: Product) -> dict:
+    d = {}
+    d.update(p)
+
+    d["condition"] = p["condition"].name
+    d["lastUpdatedAt"] = p["lastUpdatedAt"].isoformat()
+
+    return d
