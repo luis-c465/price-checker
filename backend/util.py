@@ -1,3 +1,5 @@
+import re
+import typing
 from datetime import datetime
 
 from _types import Condition, Product
@@ -29,3 +31,20 @@ def serialize_product(p: Product) -> dict:
     d["lastUpdatedAt"] = p["lastUpdatedAt"].isoformat()
 
     return d
+
+def get_first_int(s: str) -> typing.Optional[int]:
+    """Gets the first int in a given string
+    If an integer does not exist in the input string returns None
+
+    Uses regex to accomplish this task
+    """
+
+    match  = re.search("[0-9]+", s)
+    if not match:
+        return None
+
+    data = match.group()
+    try:
+        return int(data)
+    except Exception:
+        return None
