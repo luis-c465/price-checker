@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Modal,
-} from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons"; // Assuming you're using Expo
+import React, { useEffect, useState } from "react";
+import {
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import ProductBox, { ProductData } from "./ProductLister/ProductBox";
 
 interface ProductListContainerProps {
@@ -22,44 +22,54 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({
   const [products, setProducts] = useState<ProductData[]>([]);
 
   useEffect(() => {
-    // Generate random ratings for default products when the component mounts
-    const getRandomRating = () => {
-      return Math.floor(Math.random() * 5) + 1; // Generate a random number between 1 and 5
-    };
+    (async () => {
+      // Generate random ratings for default products when the component mounts
+      const getRandomRating = () => {
+        return Math.floor(Math.random() * 5) + 1; // Generate a random number between 1 and 5
+      };
 
-    // Generate random isNew values for default products when the component mounts
-    const getRandomIsNew = () => {
-      return Math.random() < 0.5; // Generate a random boolean value
-    };
+      // Generate random isNew values for default products when the component mounts
+      const getRandomIsNew = () => {
+        return Math.random() < 0.5; // Generate a random boolean value
+      };
 
-    const defaultProductsData: ProductData[] = [
-      {
-        price: 19.99,
-        shipping: true,
-        seller: "Seller 1",
-        description: "Product 1 Description",
-        rating: getRandomRating(),
-        isNew: getRandomIsNew(), // Set isNew for each default product
-      },
-      {
-        price: 29.99,
-        shipping: false,
-        seller: "Seller 2",
-        description: "Product 2 Description",
-        rating: getRandomRating(),
-        isNew: getRandomIsNew(), // Set isNew for each default product
-      },
-      {
-        price: 39.99,
-        shipping: true,
-        seller: "Seller 3",
-        description: "Product 3 Description",
-        rating: getRandomRating(),
-        isNew: getRandomIsNew(), // Set isNew for each default product
-      },
-    ];
+      // " " ``
+      // console.log("making request")
+      // const item = "MacBook Pro M1 16 in"
+      // const encoded = encodeURIComponent(item);
+      // const req = await fetch(`https://e3a4-131-94-186-14.ngrok-free.app/search?query=${encoded}`)
+      // console.log("done with request #2")
+      // const products = await req.json() as ProductData[]
+      // console.log("done with request")
+      // const defaultProductsData: ProductData[] = [
+      //   {
+      //     price: 19.99,
+      //     shipping: 0,
+      //     seller: "Seller 1",
+      //     description: "Product 1 Description",
+      //     rating: getRandomRating(),
+      //     isNew: getRandomIsNew(), // Set isNew for each default product
+      //   },
+      //   {
+      //     price: 29.99,
+      //     shipping: false,
+      //     seller: "Seller 2",
+      //     description: "Product 2 Description",
+      //     rating: getRandomRating(),
+      //     isNew: getRandomIsNew(), // Set isNew for each default product
+      //   },
+      //   {
+      //     price: 39.99,
+      //     shipping: true,
+      //     seller: "Seller 3",
+      //     description: "Product 3 Description",
+      //     rating: getRandomRating(),
+      //     isNew: getRandomIsNew(), // Set isNew for each default product
+      //   },
+      // ];
 
-    setProducts(defaultProductsData);
+      setProducts(products);
+    })()
   }, []);
 
   // Sort options for the dropdown

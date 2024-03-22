@@ -1,14 +1,22 @@
 // ProductBox.tsx
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from "react-native";
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export interface ProductData {
   price: number;
-  shipping: boolean;
+  shipping: number;
+  condition?: boolean;
   seller: string;
   description: string;
+  num_ratings: number
   rating: number;
-  isNew?: boolean;
+  photos: string[];
+  seller_num_ratings: number;
+  seller_avg_ratings: number;
+  measurements: string;
+  quantity: number;
+  lastUpdatedAt: string
+  url: string
 }
 
 interface ProductBoxProps extends ProductData {}
@@ -19,12 +27,12 @@ const ProductBox: React.FC<ProductBoxProps> = ({
   seller,
   description,
   rating,
-  isNew = false, // Default value for isNew is false
+  condition: isNew = false, // Default value for isNew is false
 }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   // Calculate the number of empty stars (5 - rating)
-  const emptyStars = 5 - rating;
+  // const emptyStars = rating !== -1 ? 5 - Math.floor(rating / 20) : 0;
 
   return (
     <View style={styles.productBox}>
@@ -38,7 +46,7 @@ const ProductBox: React.FC<ProductBoxProps> = ({
           <Text style={styles.bold}>Buy now:</Text> ${price.toFixed(2)}
         </Text>
         <Text style={styles.whiteText}>
-          <Text style={styles.bold}>Shipping:</Text> {shipping ? "Yes" : "No"}
+          <Text style={styles.bold}>Shipping:</Text> ${shipping.toFixed(2)}
         </Text>
         <Text style={styles.whiteText}>
           <Text style={styles.bold}>Seller/Brand:</Text> {seller}
@@ -57,11 +65,11 @@ const ProductBox: React.FC<ProductBoxProps> = ({
           </Text>
         ))}
         {/* Render empty stars based on the remaining emptyStars */}
-        {[...Array(emptyStars)].map((_, index) => (
+        {/* {[...Array(emptyStars)].map((_, index) => (
           <Text key={`empty-${index}`} style={styles.starOutline}>
             ☆
           </Text>
-        ))}
+        ))} */}
       </View>
       {/* Modal for full description */}
       <Modal

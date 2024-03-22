@@ -1,6 +1,6 @@
 // ProductListContainer.tsx
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import ProductBox, { ProductData } from "./ProductBox";
 import SortByPriceButton from "./SortByPriceButton";
 import SortByRatingButton from "./SortByRatingButton";
@@ -41,19 +41,9 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({
       </View>
       {/* Product List */}
       <ScrollView style={styles.productListContainer}>
-        {products.length > 0 ? (
-          products.map((product, index) => (
-            <ProductBox key={index} {...product} />
-          ))
-        ) : (
-          <ProductBox
-            price={0}
-            shipping={false}
-            seller="Default Seller"
-            description="Default Description"
-            rating={0}
-          />
-        )}
+        {products.map((product, index) => (
+          <ProductBox key={index} {...product} />
+        ))}
       </ScrollView>
     </View>
   );
