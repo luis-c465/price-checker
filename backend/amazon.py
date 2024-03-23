@@ -1,3 +1,5 @@
+import lxml
+import cchardet
 import logging
 from asyncio import Condition
 from typing import Optional
@@ -16,7 +18,7 @@ def scrape(url: str) -> PossibleProduct:
         return None
 
     html = req.text
-    page = BeautifulSoup(html, "html.parser")
+    page = BeautifulSoup(html, "lxml")
     return scrape_w_soup(page, url)
 
 

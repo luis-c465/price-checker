@@ -1,11 +1,12 @@
 import datetime
 import logging
 import os
+from tarfile import AbsoluteLinkError
 from typing import NamedTuple
 
-import dateutil
-import ebay
 import requests
+
+import ebay
 from _types import Product
 
 BING_API_KEY = os.environ.get("BING_API_KEY")
@@ -56,7 +57,13 @@ class SiteSearch(NamedTuple):
     url: str
     cached_at: datetime.datetime
 
-def text_search_url(site_url: str, query: str, n_results = 35) -> list[SiteSearch]:
+def text_search_url(site_url: str, query: str, n_results = 20) -> list[SiteSearch]:
+    """Searches Bing for a given site with a query,
+    Returns a list of SiteSearches with contains simplified information about the results
+
+    Meant to be scraped later
+    """
+
     search = f"site:{site_url} {query}"
 
     params = {

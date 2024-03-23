@@ -16,7 +16,7 @@ def scrape(url: str) -> PossibleProduct:
         return None
 
     html = req.text
-    page = BeautifulSoup(html, "html.parser")
+    page = BeautifulSoup(html, "lxml")
     return scrape_w_soup(page, url)
 
 
