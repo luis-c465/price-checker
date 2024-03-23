@@ -25,10 +25,8 @@ class TestAmazon(Test):
             "measurements": "",
             "quantity": 14,
             "description": 'Metric Thread Tap: Thread size: M20 x 2.5; accuracy: H2; square shank width: 11mm / 0.43"; thread length: 40mm / 1.57"; total length: 110mm / 4.33". Clear threads, right hand tapping direction. The screw Tap can make new threads or re-thread damaged or jammed threads.',
-            "lastUpdatedAt": _EPOCH,
-            "url": None
         }
-        self.assertDictEqual(output, should)
+        self.assertProductsEqual(output, should)
 
     def test_beef_jerky(self):
         url = "https://www.amazon.com/Jack-Links-Snacks-Jerky-Teriyaki/dp/B00VB1Y3UA/"
@@ -47,10 +45,8 @@ class TestAmazon(Test):
             "measurements": "",
             "quantity": -2,
             "description": "GOOD SOURCE OF PROTEIN: Protein is an essential part of your diet. With 11 grams of protein and 80 calories per serving, it's a must-have snack to help keep you satisfied and energized all day",
-            "lastUpdatedAt": _EPOCH,
-            "url": None
         }
-        self.assertDictEqual(output, should)
+        self.assertProductsEqual(output, should)
 
     def test_samsung_monitor(self):
         url = "https://www.amazon.com/SAMSUNG-27-inch-Border-Less-FreeSync-LF27T350FHNXZA"
@@ -69,10 +65,8 @@ class TestAmazon(Test):
             "measurements": "",
             "quantity": -2,
             "description": "ALL-EXPANSIVE VIEW: The 3-sided borderless display brings a clean and modern aesthetic to any working environment. In a multi-monitor setup, the displays line up seamlessly for a virtually gapless view without distractions.Aspect ratio:16:9.Response time:5.0 milliseconds",
-            "lastUpdatedAt": _EPOCH,
-            "url": None
         }
-        self.assertDictEqual(output, should)
+        self.assertProductsEqual(output, should)
 
 
 
