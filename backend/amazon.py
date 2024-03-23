@@ -1,9 +1,8 @@
-import lxml
-import cchardet
 import logging
 from asyncio import Condition
 from typing import Optional
 
+import lxml
 import requests
 from bs4 import BeautifulSoup
 
