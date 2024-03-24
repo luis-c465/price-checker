@@ -1,13 +1,23 @@
 import datetime
 import logging
 import os
-from tarfile import AbsoluteLinkError
-from typing import NamedTuple
+from concurrent.futures import ThreadPoolExecutor
+from typing import Callable, NamedTuple, Optional
 
 import requests
+from bs4 import BeautifulSoup
 
 import ebay
 from _types import Product
+
+THREAD_POOL = 16
+session = requests.Session()
+session.mount(
+    'https://',
+    requests.adapters.HTTPAdapter(pool_maxsize=THREAD_POOL,
+                                  max_retries=2,
+                                  pool_block=True)
+)
 
 BING_API_KEY = os.environ.get("BING_API_KEY")
 
@@ -34,8 +44,9 @@ SITE_TO_SPECIFIER = {
 }
 
 
+Scrapper = Callable[[BeautifulSoup, str], "Product"]
 SITE_TO_SCRAPPER = {
-    "ebay": ebay.scrape,
+    "ebay": ebay.scrape_w_soup,
     "offerup": None,
     "wayfair": None,
     "amazon": None,
@@ -57,7 +68,7 @@ class SiteSearch(NamedTuple):
     url: str
     cached_at: datetime.datetime
 
-def text_search_url(site_url: str, query: str, n_results = 20) -> list[SiteSearch]:
+def text_search_url(site_url: str, query: str, n_results = 15) -> list[SiteSearch]:
     """Searches Bing for a given site with a query,
     Returns a list of SiteSearches with contains simplified information about the results
 
@@ -69,14 +80,16 @@ def text_search_url(site_url: str, query: str, n_results = 20) -> list[SiteSearc
     params = {
         "q": search,
         "mkt": "en-US",
-        "freshness": "Week",
+        "freshness": "month",
         "count": str(n_results),
     }
     headers = {
         "Ocp-Apim-Subscription-Key": BING_API_KEY
     }
 
-    res = requests.get(f"{BING_API_URL}/search", headers=headers, params=params)
+    print("test")
+
+    res = session.get(f"{BING_API_URL}/search", headers=headers, params=params)
     try:
         res.raise_for_status()
     except Exception as e:
@@ -84,6 +97,10 @@ def text_search_url(site_url: str, query: str, n_results = 20) -> list[SiteSearc
         return []
 
     data = res.json()
+    with open("tmp.json", "w") as f:
+        f.write(res.text)
+
+
     pages = data["webPages"]["value"]
 
     urls = [
@@ -98,19 +115,30 @@ def text_search_url(site_url: str, query: str, n_results = 20) -> list[SiteSearc
     return urls
 
 def text_search_all(query: str) -> list[Product]:
-    products = []
+    def _search(data: tuple[str, str]):
+        product_url, specifier = data
+        return [product
+                for product in search_and_scrape(product_url, query, SITE_TO_SCRAPPER[specifier])]
 
-    for specifier, site_product_url in SITE_TO_SPECIFIER.items():
-        scrapper = SITE_TO_SCRAPPER[specifier]
-        if not scrapper: continue
+    with ThreadPoolExecutor(max_workers=15) as exector:
+        return [product
+                for results in exector.map(_search, SITE_TO_SPECIFIER.items())
+                    for product in results
+                ]
 
-        urls_to_scrape = text_search_url(site_product_url, query)
-        for cached_url, url, lastUpdated in urls_to_scrape:
-            product: Product = scrapper(cached_url)
-            if product == None: continue
+def search_and_scrape(site_product_url: str, query: str ,scraper: Scrapper) -> list[Product]:
+    urls_to_scrape = text_search_url(site_product_url, query)
+    def _scrape(siteSearch: SiteSearch) -> Optional[Product]:
+        cached_url, url, lastUpdated = siteSearch
+        req = session.get(url)
+        if 400 <= req.status_code < 600:
+            # The request it not ok
+            return None
+        product = scraper(BeautifulSoup(req.text, "lxml"), cached_url)
+        product["lastUpdatedAt"] = lastUpdated
+        product["url"] = url
+        return product
 
-            product["lastUpdatedAt"] = lastUpdated
-            product["url"] = url
-            products.append(product)
-
-    return products
+    with ThreadPoolExecutor(max_workers=THREAD_POOL) as executor:
+        return [product
+                for product in executor.map(_scrape, urls_to_scrape)]
