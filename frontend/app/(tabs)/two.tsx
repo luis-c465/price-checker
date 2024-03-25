@@ -4,11 +4,14 @@ import { useRouter } from 'expo-router';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
+import React, { useState } from 'react';
 
 export default function TabTwoScreen() {
   const router = useRouter();
-
+  const [searchText, setSearchText] = useState('');
+  
   const handleSearchSubmit = () => {
+    console.log(searchText);
     router.push('/modal');
   };
   
@@ -18,6 +21,7 @@ export default function TabTwoScreen() {
         style={{...styles.searchBar, color: 'white'}}
         placeholder="Search..."
         placeholderTextColor="white"
+        onChangeText={text => setSearchText(text)}
         onSubmitEditing={handleSearchSubmit}
       />
       <Text style={styles.title}>Tab Two</Text>
