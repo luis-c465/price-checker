@@ -42,6 +42,7 @@ const ProductBox: React.FC<ProductBoxProps> = ({
       {isNew && (
         <View style={styles.newLabel}>
           <Text style={styles.newText}>New</Text>
+          <Text style={styles.newDot}>•</Text>
         </View>
       )}
       <View style={styles.content}>
@@ -95,7 +96,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between", // Center items horizontally
     overflow: "visible", // Allow content to overflow the container
-    width: "80%", // Set a fixed width for the product box
+    width: "90%", // Set a fixed width for the product box
+    marginLeft: 30,
     position: "relative", // Ensure relative positioning for absolute elements
     alignSelf: "center", // Center the product boxes horizontally
     marginTop: 20, // Add some top margin to create space below the header
@@ -109,8 +111,12 @@ const styles = StyleSheet.create({
   },
   newLabel: {
     position: "absolute",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
     top: -10,
-    left: -20,
+    left: -40,
     backgroundColor: "red",
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -122,7 +128,12 @@ const styles = StyleSheet.create({
   newText: {
     color: "white",
     fontSize: 13,
-    transform: [{ rotate: "45deg" }],
+    fontWeight: "900"
+  },
+  newDot: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "900"
   },
   whiteText: {
     color: "white",
