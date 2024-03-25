@@ -7,7 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from _types import Condition, PossibleProduct
-from util import make_product_dict
+from util import get_first_int, make_product_dict
 
 
 def scrape(url: str) -> PossibleProduct:
@@ -31,8 +31,7 @@ def scrape_w_soup(page: BeautifulSoup, url: str) -> PossibleProduct:
     if price := _price(page, url):
         product_info["price"] = price
 
-    if condition := _condition(page, url):
-        product_info["condition"] = condition
+    product_info["condition"] = Condition.NEW
 
     if (shipping := _shipping(page, url)) != None:
         product_info["shipping"] = shipping
@@ -40,11 +39,11 @@ def scrape_w_soup(page: BeautifulSoup, url: str) -> PossibleProduct:
     if photos := _photos(page, url):
         product_info["photos"] = photos
 
-    if seller_num_ratings := _seller_num_ratings(page, url):
-        product_info["seller_num_ratings"] = seller_num_ratings
+    if num_ratings := _num_ratings(page, url):
+        product_info["num_ratings"] = num_ratings
 
-    if seller_avg_ratings := _seller_avg_ratings(page, url):
-        product_info["seller_avg_ratings"] = seller_avg_ratings
+    if avg_rating := _avg_ratings(page, url):
+        product_info["avg_rating"] = avg_rating
 
     if quantity := _quantity(page, url):
         product_info["quantity"] = quantity
@@ -56,10 +55,9 @@ def scrape_w_soup(page: BeautifulSoup, url: str) -> PossibleProduct:
 
 
 def _price(page: BeautifulSoup, url: str) -> Optional[float]:
-    price_elm = page.select_one(".x-price-primary")
+    price_elm = page.select_one(".priceToPay")
     if price_elm == None:
-        logging.warning(f"@{url} price element not found")
-        return None
+        return _subscription_price(page, url)
 
     price_txt = price_elm.text
     if len(price_txt) == 0:
@@ -67,7 +65,7 @@ def _price(page: BeautifulSoup, url: str) -> Optional[float]:
         return None
 
     # Split the text string by the dolor sign
-    splices = price_txt.split("$", 1)
+    splices = price_txt.strip().split("$", 1)
     if len(splices) != 2:
         logging.warning(f"@{url} price text '{price_txt}' does not have a '$', or formatted badly")
         return None
@@ -78,37 +76,51 @@ def _price(page: BeautifulSoup, url: str) -> Optional[float]:
         logging.warning(f"@{url} price '{splices[1]}' is not a float or formatted badly")
         return None
 
-def _condition(page: BeautifulSoup, url: str) -> Optional[str]:
-    elm = page.select_one(".x-item-condition-text .clipped")
-    if elm == None:
-        logging.warning(f"@{url} condition element not found")
+def _subscription_price(page: BeautifulSoup, url: str) -> Optional[float]:
+    """Handles that alternate case where the page is a subscription page containing different classnames & id's
+    """
+
+    subscription_elm = page.select_one("#buyBoxAccordion > #newAccordionRow_0 #apex_offerDisplay_desktop .a-size-base > .a-offscreen")
+
+    if subscription_elm == None:
+        logging.warning(f"@{url} price element not found")
         return None
 
-    condition_txt = elm.text
-    if len(condition_txt) == 0:
-        logging.warning(f"@{url}: condition is empty")
+    price_txt = subscription_elm.text
+    if len(price_txt) == 0:
+        logging.warning(f"@{url} price text is empty")
         return None
 
-    return condition_txt
+    # Split the text string by the dolor sign
+    splices = price_txt.strip().split("$", 1)
+    if len(splices) != 2:
+        logging.warning(f"@{url} price text '{price_txt}' does not have a '$', or formatted badly")
+        return None
+
+    try:
+        return float(splices[1].replace(",", ""))
+    except ValueError:
+        logging.warning(f"@{url} price '{splices[1]}' is not a float or formatted badly")
+        return None
 
 def _shipping(page: BeautifulSoup, url: str) -> Optional[float]:
-    elm = page.select_one(".d-shipping-minview .ux-labels-values__values-content .ux-textspans--BOLD")
+    elm = page.select_one("span[data-csa-c-delivery-price]")
     if elm == None:
         logging.warning(f"@{url} shipping element not found")
         return None
 
-    txt = elm.text
-    if len(txt) == 0:
-        logging.warning(f"@{url}: price is empty")
+    price: str = elm.get("data-csa-c-delivery-price")
+    if len(price) == 0:
+        logging.warning(f"@{url}: shipping price is empty")
         return None
 
-    if "free" in txt.lower():
+    if "free" in price.lower():
         return 0
 
     # Split the text string by the dolor sign
-    splices = txt.split("$", 1)
+    splices = price.split("$", 1)
     if len(splices) != 2:
-        logging.warning(f"@{url} shipping price text '{txt}' does not have a '$', or formatted badly")
+        logging.warning(f"@{url} shipping price text '{price}' does not have a '$', or formatted badly")
         return None
 
     try:
@@ -117,104 +129,87 @@ def _shipping(page: BeautifulSoup, url: str) -> Optional[float]:
         logging.warning(f"@{url} shipping price splice '{splices[1]}' is not a float or formatted badly")
         return None
 
-def _condition(page: BeautifulSoup, url:str) -> Optional[Condition]:
-    elm = page.select_one(".x-item-condition-text .clipped")
-    if elm == None:
-        logging.warning(f"@{url} condition element not found")
-        return None
-
-    txt = elm.text.lower()
-    if len(txt) == 0:
-        logging.warning(f"@{url}: condition is empty")
-        return None
-
-    if txt == "new":
-        return Condition.NEW
-    else:
-        return Condition.USED
-
 def _photos(page: BeautifulSoup, url: str) -> Optional[list[str]]:
-    elms = page.select(".x-photos-min-view .ux-image-carousel-container .ux-image-carousel-item > img", limit=3)
-    if elms == None or len(elms) == 0:
+    elm = page.select_one("#imageBlock #imgTagWrapperId > img")
+    if elm == None:
         logging.warning(f"@{url} images not found")
         return None
 
-    return [img for elm in elms if (img := elm.get("data-zoom-src", default=None))]
+    return [elm.get("src")]
 
-def _seller_num_ratings(page: BeautifulSoup, url: str) -> Optional[int]:
-    elm = page.select_one(".x-sellercard-atf__about-seller")
+def _num_ratings(page: BeautifulSoup, url: str) -> Optional[int]:
+    elm = page.select_one("#averageCustomerReviews #acrCustomerReviewLink > span")
     if elm == None:
-        logging.warning(f"@{url} number of seller ratings not found")
+        logging.warning(f"@{url} number of ratings not found")
         return None
 
-    txt = elm.text
+    txt = elm.text.strip()
     if not txt or len(txt) == 0:
-        logging.warning(f"@{url} number of seller ratings text invalid")
+        logging.warning(f"@{url} number of ratings text invalid")
         return None
 
-    int_part = txt[1:len(txt) - 1]
+    splits = txt.split(" ")
+    if len(splits) != 2:
+        logging.warning(f"@{url} number of splits {splits} not 2")
+        return None
+
+    int_part = splits[0].replace(",", "")
     try:
         return int(int_part)
     except ValueError:
-        logging.warning(f"@{url} number of seller ratings '{int_part}' is not an int")
+        logging.warning(f"@{url} number of ratings '{int_part}' is not an int")
         return None
 
-def _seller_avg_ratings(page: BeautifulSoup, url:str) -> Optional[int]:
-    elm = page.select_one(".x-sellercard-atf__data-item-wrapper > li")
+def _avg_ratings(page: BeautifulSoup, url:str) -> Optional[int]:
+    elm = page.select_one("#averageCustomerReviews a[role='button'] > span")
     if elm == None:
         logging.warning(f"@{url} avg seller rating not found")
         return None
 
-    txt = elm.text
-    if not txt or len(txt) == 0:
+    rating = elm.text.strip()
+    if not rating or len(rating) == 0:
         logging.warning(f"@{url} number of seller ratings text invalid")
         return None
 
-    splits = txt.split("%", maxsplit=1)
-    if len(splits) != 2:
-        logging.warning(f"@{url} the number of splits in '{txt} is not 2'")
-        return None
-
-    rating_part = splits[0]
     try:
-        return round(float(rating_part), ndigits=None)
+        return round(float(rating) * 20, ndigits=None)
     except ValueError:
-        logging.warning(f"@{url} avg seller ratings '{rating_part}' is not an int")
+        logging.warning(f"@{url} avg rating '{rating}' is not an float")
         return None
 
 def _quantity(page: BeautifulSoup, url: str) -> Optional[int]:
-    elm = page.select_one(".d-quantity__availability span")
+    elm = page.select_one("#availability")
 
     # If the availability element does not exist, then it is assumed there is only
     # one for sale
     if elm == None:
         return 1
 
-    txt = elm.text
+    txt = elm.text.strip().lower()
     if not txt or len(txt) == 0:
         logging.warning(f"@{url} availability is empty")
         return None
 
-    splits = txt.split(" ", maxsplit=1)
-    if len(splits) != 2:
-        logging.warning(f"@{url} the number of splits in '{txt}' is not 2")
+    if txt == "in stock":
+        # Means unlimited availability!
+        return -2
+
+    # TODO: Fix me & use a regex searching for nay number in the string and return that!
+    maybe_quantity = get_first_int(txt)
+    if not maybe_quantity:
+        logging.warning(f"@{url} there is no integer in the quantity!")
         return None
 
-    quantity_part = splits[0]
-    try:
-        return int(quantity_part)
-    except ValueError:
-        logging.warning(f"@{url} quantity '{quantity_part}' is not an int")
-        return None
+    return maybe_quantity
 
 def _description(page: BeautifulSoup, url: str) -> Optional[str]:
-    elm = page.select_one("meta[name='description']")
+    elm = page.select_one("#feature-bullets > ul > li")
 
     if elm == None:
         logging.warning(f"@{url} description not found")
         return None
 
-    txt = elm.get("content", None)
+    txt = elm.text.strip()
     if not txt or len(txt) == 0:
         logging.warning(f"@{url} description is empty")
         return None
