@@ -9,6 +9,7 @@ import React, { useState } from 'react';
 export default function TabTwoScreen() {
   const router = useRouter();
   const [searchText, setSearchText] = useState('');
+  const SearchContext = React.createContext('');
   
   const handleSearchSubmit = () => {
     console.log(searchText);
@@ -16,6 +17,7 @@ export default function TabTwoScreen() {
   };
   
   return (
+    <SearchContext.Provider value={searchText}>
     <View style={styles.container}>
       <TextInput
         style={{...styles.searchBar, color: 'white'}}
@@ -28,6 +30,7 @@ export default function TabTwoScreen() {
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <EditScreenInfo path="app/(tabs)/two.tsx" />
     </View>
+    </SearchContext.Provider>
   );
 }
 
