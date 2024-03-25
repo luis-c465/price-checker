@@ -1,82 +1,116 @@
-// ProductListContainer.tsx
-import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { FontAwesome5 } from "@expo/vector-icons";
 import ProductBox, { ProductData } from "./ProductBox";
-import SortByPriceButton from "./SortByPriceButton";
-import SortByRatingButton from "./SortByRatingButton";
+import { defaultProductsData } from "./DefaultProduct";
+import FilterModal from ".//FilterModal";
+import SortModal from ".//SortModal";
+import styles from ".//styles";
 
 interface ProductListContainerProps {
   products?: ProductData[];
 }
 
-const ProductListContainer: React.FC<ProductListContainerProps> = ({
-  products = [],
-}) => {
-  const [sortBy, setSortBy] = useState("");
+const ProductListContainer: React.FC<ProductListContainerProps> = ({}) => {
+  const [products, setProducts] = useState<ProductData[]>(defaultProductsData);
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [sortBy, setSortBy] = useState<string | null>(null);
 
-  // Sort by options
-  const sortByOptions = ["Price", "Rating"];
-
-  const sortByPrice = () => {
-    // Sort products by price
-    // Update products state
-    setSortBy("Price");
+  const sortProducts = (products: ProductData[], sortBy: string | null) => {
+    if (sortBy === "Price") {
+      return [...products].sort((a, b) => a.price - b.price);
+    } else if (sortBy === "Rating") {
+      return [...products].sort((a, b) => b.rating - a.rating);
+    } else {
+      return products;
+    }
   };
 
-  const sortByRating = () => {
-    // Sort products by rating
-    // Update products state
-    setSortBy("Rating");
+  useEffect(() => {
+    const sortedProducts = sortProducts(products, sortBy);
+    // Check if the products have already been sorted
+    if (JSON.stringify(sortedProducts) === JSON.stringify(products)) {
+      return;
+    }
+    setProducts(sortedProducts);
+  }, [sortBy]);
+
+  const [showSortModal, setShowSortModal] = useState(false);
+
+  const handleSortBy = (option: string | null) => {
+    setSortBy(option);
+    setShowSortModal(false);
+  };
+
+  const handleSort = () => {
+    setShowSortModal(true);
+  };
+
+  const handleFilter = () => {
+    setShowFilterModal(true);
+  };
+
+  const applyFilters = (filters: any) => {
+    let filteredProducts = [...defaultProductsData];
+
+    if (filters.minPrice !== undefined) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.price >= filters.minPrice
+      );
+    }
+    if (filters.maxPrice !== undefined) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.price <= filters.maxPrice
+      );
+    }
+    if (filters.minRating !== undefined) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.rating >= filters.minRating
+      );
+    }
+    if (filters.maxRating !== undefined) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.rating <= filters.maxRating
+      );
+    }
+    if (filters.condition !== undefined) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.condition === filters.condition
+      );
+    }
+
+    setProducts(filteredProducts);
+    setShowFilterModal(false);
   };
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.productName}>Product Name</Text>
-        <View style={styles.sortFilterContainer}>
-          <SortByPriceButton onPress={sortByPrice} />
-          <SortByRatingButton onPress={sortByRating} />
-        </View>
+        <TouchableOpacity style={styles.iconButton} onPress={handleFilter}>
+          <FontAwesome5 name="filter" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton} onPress={handleSort}>
+          <FontAwesome5 name="sort" size={24} color="black" />
+        </TouchableOpacity>
       </View>
-      {/* Product List */}
-      <ScrollView style={styles.productListContainer}>
+      <ScrollView style={styles.scrollContainer}>
         {products.map((product, index) => (
           <ProductBox key={index} {...product} />
         ))}
       </ScrollView>
+      <FilterModal
+        visible={showFilterModal}
+        onClose={() => setShowFilterModal(false)}
+        applyFilters={applyFilters}
+      />
+      <SortModal
+        visible={showSortModal}
+        onClose={() => setShowSortModal(false)}
+        applySort={handleSortBy}
+      />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-    paddingVertical: 20,
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    flexDirection: "column",
-    alignItems: "flex-start",
-  },
-  productName: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  sortFilterContainer: {
-    flexDirection: "row",
-    marginTop: 10,
-  },
-  sortBy: {
-    marginRight: 5,
-  },
-  productListContainer: {
-    maxHeight: 400,
-  },
-});
 
 export default ProductListContainer;

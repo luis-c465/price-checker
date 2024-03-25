@@ -1,238 +1,137 @@
-import { FontAwesome5 } from "@expo/vector-icons"; // Assuming you're using Expo
 import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { FontAwesome5 } from "@expo/vector-icons";
 import ProductBox, { ProductData } from "./ProductLister/ProductBox";
+import { defaultProductsData } from "./ProductLister/DefaultProduct";
+import FilterModal from "./ProductLister/FilterModal";
+import SortModal from "./ProductLister/SortModal";
+import styles from "./ProductLister/styles";
+import DescriptionModal from "./ProductLister/DescriptionModal";
 
 interface ProductListContainerProps {
   products?: ProductData[];
 }
 
-const ProductListContainer: React.FC<ProductListContainerProps> = ({
-  products: initialProducts = [],
-}) => {
-  const [sortBy, setSortBy] = useState<string | null>(null);
+const ProductListContainer: React.FC<ProductListContainerProps> = ({}) => {
+  const [products, setProducts] = useState<ProductData[]>(defaultProductsData);
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const [products, setProducts] = useState<ProductData[]>([]);
+  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [showSortModal, setShowSortModal] = useState(false);
+  const [showUsedProducts, setShowUsedProducts] = useState(false);
+  const [descriptionVisible, setDescriptionVisible] = useState(false);
+  const [selectedDescription, setSelectedDescription] = useState("");
 
-  useEffect(() => {
-    (async () => {
-      // Generate random ratings for default products when the component mounts
-      const getRandomRating = () => {
-        return Math.floor(Math.random() * 5) + 1; // Generate a random number between 1 and 5
-      };
-
-      // Generate random isNew values for default products when the component mounts
-      const getRandomIsNew = () => {
-        return Math.random() < 0.5; // Generate a random boolean value
-      };
-
-      // " " ``
-      // console.log("making request")
-      // const item = "MacBook Pro M1 16 in"
-      // const encoded = encodeURIComponent(item);
-      // const req = await fetch(`https://e3a4-131-94-186-14.ngrok-free.app/search?query=${encoded}`)
-      // console.log("done with request #2")
-      // const products = await req.json() as ProductData[]
-      // console.log("done with request")
-      // const defaultProductsData: ProductData[] = [
-      //   {
-      //     price: 19.99,
-      //     shipping: 0,
-      //     seller: "Seller 1",
-      //     description: "Product 1 Description",
-      //     rating: getRandomRating(),
-      //     isNew: getRandomIsNew(), // Set isNew for each default product
-      //   },
-      //   {
-      //     price: 29.99,
-      //     shipping: false,
-      //     seller: "Seller 2",
-      //     description: "Product 2 Description",
-      //     rating: getRandomRating(),
-      //     isNew: getRandomIsNew(), // Set isNew for each default product
-      //   },
-      //   {
-      //     price: 39.99,
-      //     shipping: true,
-      //     seller: "Seller 3",
-      //     description: "Product 3 Description",
-      //     rating: getRandomRating(),
-      //     isNew: getRandomIsNew(), // Set isNew for each default product
-      //   },
-      // ];
-
-      setProducts(products);
-    })()
-  }, []);
-
-  // Sort options for the dropdown
-  const sortOptions = ["Price", "Rating"];
-
-  // Function to handle sorting
-  const handleSortBy = (option: string | null) => {
-    setSortBy(option ?? null); // Use nullish coalescing operator to handle null values
+  const handleDescription = (description: string) => {
+    setSelectedDescription(description);
+    setDescriptionVisible(true);
   };
 
-  // Function to handle filtering
-  const handleFilter = () => {
-    setShowFilterModal(true);
-  };
-
-  // Function to apply filters
-  const applyFilters = (filters: any) => {
-    // Apply filters to products
-    console.log("Applied filters:", filters);
-    setShowFilterModal(false);
-  };
-
-  // Filter modal content
-  const FilterModal = () => {
-    // Define filtering options here
-    // For demonstration, I'm just showing some example options
-    const filterOptions: Record<string, string[]> = {
-      shipping: ["Available", "Not Available"],
-      priceRange: ["Under $20", "$20 - $50", "Over $50"],
-      rating: [
-        "5 Stars",
-        "4 Stars & Up",
-        "3 Stars & Up",
-        "2 Stars & Up",
-        "1 Star & Up",
-      ],
-      seller: ["Walmart", "Target"],
-    };
-
-    return (
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={showFilterModal}
-        onRequestClose={() => setShowFilterModal(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Filter Options</Text>
-            {/* Render filtering options here */}
-            {/* For demonstration, I'm just showing example options */}
-            {Object.keys(filterOptions).map((option, index) => (
-              <View key={index}>
-                <Text style={styles.filterOptionTitle}>{option}</Text>
-                {filterOptions[option].map((item, idx) => (
-                  <TouchableOpacity
-                    key={idx}
-                    style={styles.filterOption}
-                    onPress={() => applyFilters({ [option]: item })}
-                  >
-                    <Text>{item}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            ))}
-          </View>
-        </View>
-      </Modal>
-    );
-  };
-
-  // Function to sort products based on selected option
-  const sortProducts = (products: ProductData[]) => {
+  const sortProducts = (products: ProductData[], sortBy: string | null) => {
     if (sortBy === "Price") {
-      // Sort by price
-      return products.sort((a, b) => a.price - b.price);
+      return [...products].sort((a, b) => a.price - b.price);
+    } else if (sortBy === "Price-desc") {
+      return [...products].sort((a, b) => b.price - a.price);
     } else if (sortBy === "Rating") {
-      // Sort by rating
-      return products.sort((a, b) => b.rating - a.rating);
+      return [...products].sort((a, b) => b.rating - a.rating);
     } else {
-      // No sorting applied
       return products;
     }
   };
 
+  useEffect(() => {
+    const sortedProducts = sortProducts(products, sortBy);
+    // Check if the products have already been sorted
+    if (JSON.stringify(sortedProducts) === JSON.stringify(products)) {
+      return;
+    }
+    setProducts(sortedProducts);
+  }, [sortBy]);
+
+  const handleSortBy = (option: string | null) => {
+    setSortBy(option);
+    setShowSortModal(false);
+  };
+
+  const handleSort = () => {
+    setShowSortModal(true);
+  };
+
+  const handleFilter = () => {
+    setShowFilterModal(true);
+  };
+
+  const applyFilters = (filters: any) => {
+    // Apply filters to update the list of products
+    let filteredProducts = [...defaultProductsData];
+
+    if (filters.minPrice !== undefined) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.price >= filters.minPrice
+      );
+    }
+    if (filters.maxPrice !== undefined) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.price <= filters.maxPrice
+      );
+    }
+    if (filters.minRating !== undefined) {
+      // Adjust the condition to include products with ratings equal to or greater than the selected rating
+      filteredProducts = filteredProducts.filter(
+        (product) => product.rating >= filters.minRating
+      );
+    }
+    if (filters.condition !== undefined) {
+      if (filters.condition === "New") {
+        filteredProducts = filteredProducts.filter(
+          (product) => product.isNew === true
+        );
+      } else if (filters.condition === "Used") {
+        filteredProducts = filteredProducts.filter(
+          (product) => product.isNew === false
+        );
+      }
+    }
+
+    // Update the list of products with the filtered products
+    setProducts(filteredProducts);
+    setShowFilterModal(false);
+  };
+
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.productName}>Product Name</Text>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => handleSortBy(null)}
-        >
-          <FontAwesome5 name="sort" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton} onPress={handleFilter}>
-          <FontAwesome5 name="filter" size={24} color="black" />
-        </TouchableOpacity>
+        <View style={styles.iconButtonContainer}>
+          <TouchableOpacity style={styles.iconButton} onPress={handleFilter}>
+            <FontAwesome5 name="filter" style={styles.filterIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton} onPress={handleSort}>
+            <FontAwesome5 name="sort" style={styles.filterIcon} />
+          </TouchableOpacity>
+        </View>
       </View>
-      {/* Product List */}
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Render sorted and filtered products */}
-        {sortProducts(products).map((product, index) => (
-          <ProductBox key={index} {...product} />
+      <ScrollView style={styles.scrollContainer}>
+        {products.map((product, index) => (
+          <TouchableOpacity
+            key={index}
+            onPress={() => handleDescription(product.description)}
+          >
+            <ProductBox {...product} />
+          </TouchableOpacity>
         ))}
       </ScrollView>
-      {/* Filter Modal */}
-      <FilterModal />
+      <FilterModal
+        visible={showFilterModal}
+        onClose={() => setShowFilterModal(false)}
+        applyFilters={applyFilters}
+      />
+      <SortModal
+        visible={showSortModal}
+        onClose={() => setShowSortModal(false)}
+        applySort={handleSortBy}
+      />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-    paddingVertical: 20,
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center", // Center the items horizontally
-  },
-  productName: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  iconButton: {
-    padding: 8,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    paddingBottom: 20,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    width: "80%",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  filterOptionTitle: {
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  filterOption: {
-    paddingVertical: 5,
-  },
-});
 
 export default ProductListContainer;

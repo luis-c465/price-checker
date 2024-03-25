@@ -1,6 +1,7 @@
 // ProductBox.tsx
 import React, { useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import StarRating from "./StarRating";
 
 export interface ProductData {
   price: number;
@@ -8,15 +9,16 @@ export interface ProductData {
   condition?: boolean;
   seller: string;
   description: string;
-  num_ratings: number
+  num_ratings: number;
   rating: number;
   photos: string[];
   seller_num_ratings: number;
   seller_avg_ratings: number;
   measurements: string;
   quantity: number;
-  lastUpdatedAt: string
-  url: string
+  lastUpdatedAt: string;
+  url: string;
+  isNew: boolean;
 }
 
 interface ProductBoxProps extends ProductData {}
@@ -27,12 +29,13 @@ const ProductBox: React.FC<ProductBoxProps> = ({
   seller,
   description,
   rating,
-  condition: isNew = false, // Default value for isNew is false
+  isNew,
 }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   // Calculate the number of empty stars (5 - rating)
-  // const emptyStars = rating !== -1 ? 5 - Math.floor(rating / 20) : 0;
+  const filledStars = Math.round(rating);
+  const emptyStars = 5 - filledStars;
 
   return (
     <View style={styles.productBox}>
@@ -58,18 +61,7 @@ const ProductBox: React.FC<ProductBoxProps> = ({
         </TouchableOpacity>
       </View>
       <View style={styles.starOverlay}>
-        {/* Render filled stars based on the rating */}
-        {[...Array(rating)].map((_, index) => (
-          <Text key={index} style={styles.star}>
-            ★
-          </Text>
-        ))}
-        {/* Render empty stars based on the remaining emptyStars */}
-        {/* {[...Array(emptyStars)].map((_, index) => (
-          <Text key={`empty-${index}`} style={styles.starOutline}>
-            ☆
-          </Text>
-        ))} */}
+        <StarRating rating={rating} />
       </View>
       {/* Modal for full description */}
       <Modal
