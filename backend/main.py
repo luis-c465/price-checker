@@ -19,7 +19,7 @@ def users():
 		return "You must put a query!", 400
 
 	products = text_search_all(query)
-	serialized = [serialize_product(p) for p in products]
+	serialized = [serialize_product(p) for p in products if p != None]
 	return jsonify(*serialized)
 
 if __name__ == '__main__':
