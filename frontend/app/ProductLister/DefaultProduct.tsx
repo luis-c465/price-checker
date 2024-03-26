@@ -1,5 +1,9 @@
 import { ProductData } from "./ProductBox";
 
+const BACKEND = true;
+// Fetches results from the backend if true,
+// If not uses the hardcoded values as shown bellow
+
 // Generate random ratings for default products when the component mounts
 function getRandomRating() {
   // Ensure the rating is a number between 0 and 5
@@ -111,3 +115,15 @@ export const defaultProductsData: ProductData[] = [
   },
   // ... other products
 ];
+
+export default async function getProducts(query = "macbook pro m1 16in"): Promise<ProductData[]> {
+  if (!BACKEND) {
+    return defaultProductsData
+  }
+
+  const encoded = encodeURIComponent(query);
+  const res = await fetch(`http://10.110.240.198:5001/search?query=${encoded}`)
+  const data = await res.json()
+
+  return data
+}

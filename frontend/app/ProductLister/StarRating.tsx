@@ -8,8 +8,8 @@ interface StarRatingProps {
 
 const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
   // Calculate the number of empty stars (5 - rating)
-  const filledStars = Math.round(rating);
-  const emptyStars = 5 - filledStars;
+  const filledStars = 0;
+  const emptyStars = 5;
 
   return (
     <>
