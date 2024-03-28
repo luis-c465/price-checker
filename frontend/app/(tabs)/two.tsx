@@ -17,6 +17,7 @@ export default function TabTwoScreen() {
   };
   
   return (
+    //Wrapped the search text in a context provider
     <SearchContext.Provider value={searchText}>
     <View style={styles.container}>
       <TextInput
