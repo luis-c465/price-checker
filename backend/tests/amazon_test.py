@@ -25,6 +25,7 @@ class TestAmazon(Test):
             "measurements": "",
             "quantity": 14,
             "description": 'Metric Thread Tap: Thread size: M20 x 2.5; accuracy: H2; square shank width: 11mm / 0.43"; thread length: 40mm / 1.57"; total length: 110mm / 4.33". Clear threads, right hand tapping direction. The screw Tap can make new threads or re-thread damaged or jammed threads.',
+            "name": "uxcell Metric Thread Tap M20 x 2.5 H2 Titanium Coated HSS-CO (M35 High Speed Steel) Straight Flutes Machine Screw Tap Threading Tapping Repair Tool"
         }
         self.assertProductsEqual(output, should)
 
@@ -45,6 +46,7 @@ class TestAmazon(Test):
             "measurements": "",
             "quantity": -2,
             "description": "GOOD SOURCE OF PROTEIN: Protein is an essential part of your diet. With 11 grams of protein and 80 calories per serving, it's a must-have snack to help keep you satisfied and energized all day",
+            "name": "Jack Link's Beef Jerky, Teriyaki, ½ Pounder Bag - Flavorful Meat Snack, 11g of Protein and 80 Calories, Made with Premium Beef - 96 Percent Fat Free, No Added MSG or Nitrates/Nitrites"
         }
         self.assertProductsEqual(output, should)
 
@@ -65,6 +67,7 @@ class TestAmazon(Test):
             "measurements": "",
             "quantity": -2,
             "description": "ALL-EXPANSIVE VIEW: The 3-sided borderless display brings a clean and modern aesthetic to any working environment. In a multi-monitor setup, the displays line up seamlessly for a virtually gapless view without distractions.Aspect ratio:16:9.Response time:5.0 milliseconds",
+            "name": "SAMSUNG 27\" T35F Series FHD 1080p Computer Monitor, 75Hz, IPS Panel, HDMI, VGA (D-Sub), 3-Sided Border-Less, FreeSync, LF27T350FHNXZA"
         }
         self.assertProductsEqual(output, should)
 
