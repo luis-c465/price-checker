@@ -23,8 +23,7 @@ export default function TabTwoScreen() {
 
   const handleSearchSubmit = () => {
     console.log(searchText);
-    const encodedSearchText = encodeURIComponent(searchText);
-    router.navigate({pathname: "/modal", params: {query: searchText}})
+    router.navigate({pathname: "/modal/[query]", params: {query: searchText}})
   };
   
   return (
