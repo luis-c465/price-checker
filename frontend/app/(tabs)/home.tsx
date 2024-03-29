@@ -1,31 +1,20 @@
-import { StyleSheet, TextInput } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { useRouter } from 'expo-router';
 import { router } from 'expo-router';
+import { StyleSheet, TextInput } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native';
-import { useNavigate, useLocation, Router } from 'react-router-dom';
-import { StackNavigationProp } from '@react-navigation/stack';
 
-//type RootStackParamList = {
-//  '/modal': { searchText: string };
-//
-//};
-
-//type NavigationProp = StackNavigationProp<RootStackParamList, '/modal'>;
-
-export default function TabTwoScreen() {
+export default function HomeScreen() {
   const [searchText, setSearchText] = useState("");
-  const navigation = useNavigation();
 
   const handleSearchSubmit = () => {
     console.log(searchText);
-    router.navigate({pathname: "/modal/[query]", params: {query: searchText}})
+    // router.navigate({pathname: "/photos"})
+    router.navigate({pathname: "/products/[query]", params: {query: searchText}})
   };
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.searchContainer}>
