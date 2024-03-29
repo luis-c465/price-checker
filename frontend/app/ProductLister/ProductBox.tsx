@@ -1,6 +1,7 @@
 // ProductBox.tsx
 import React, { useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import StarRating from "./StarRating";
 
 export interface ProductData {
   price: number;
@@ -8,15 +9,16 @@ export interface ProductData {
   condition?: boolean;
   seller: string;
   description: string;
-  num_ratings: number
+  num_ratings: number;
   rating: number;
   photos: string[];
   seller_num_ratings: number;
   seller_avg_ratings: number;
   measurements: string;
   quantity: number;
-  lastUpdatedAt: string
-  url: string
+  lastUpdatedAt: string;
+  url: string;
+  isNew: boolean;
 }
 
 interface ProductBoxProps extends ProductData {}
@@ -27,18 +29,20 @@ const ProductBox: React.FC<ProductBoxProps> = ({
   seller,
   description,
   rating,
-  condition: isNew = false, // Default value for isNew is false
+  isNew,
 }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   // Calculate the number of empty stars (5 - rating)
-  // const emptyStars = rating !== -1 ? 5 - Math.floor(rating / 20) : 0;
+  const filledStars = Math.round(rating);
+  const emptyStars = 5 - filledStars;
 
   return (
     <View style={styles.productBox}>
       {isNew && (
         <View style={styles.newLabel}>
           <Text style={styles.newText}>New</Text>
+          <Text style={styles.newDot}>•</Text>
         </View>
       )}
       <View style={styles.content}>
@@ -58,18 +62,7 @@ const ProductBox: React.FC<ProductBoxProps> = ({
         </TouchableOpacity>
       </View>
       <View style={styles.starOverlay}>
-        {/* Render filled stars based on the rating */}
-        {[...Array(rating)].map((_, index) => (
-          <Text key={index} style={styles.star}>
-            ★
-          </Text>
-        ))}
-        {/* Render empty stars based on the remaining emptyStars */}
-        {/* {[...Array(emptyStars)].map((_, index) => (
-          <Text key={`empty-${index}`} style={styles.starOutline}>
-            ☆
-          </Text>
-        ))} */}
+        <StarRating rating={rating} />
       </View>
       {/* Modal for full description */}
       <Modal
@@ -103,7 +96,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between", // Center items horizontally
     overflow: "visible", // Allow content to overflow the container
-    width: "80%", // Set a fixed width for the product box
+    width: "90%", // Set a fixed width for the product box
+    marginLeft: 30,
     position: "relative", // Ensure relative positioning for absolute elements
     alignSelf: "center", // Center the product boxes horizontally
     marginTop: 20, // Add some top margin to create space below the header
@@ -117,8 +111,12 @@ const styles = StyleSheet.create({
   },
   newLabel: {
     position: "absolute",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
     top: -10,
-    left: -20,
+    left: -40,
     backgroundColor: "red",
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -130,7 +128,12 @@ const styles = StyleSheet.create({
   newText: {
     color: "white",
     fontSize: 13,
-    transform: [{ rotate: "45deg" }],
+    fontWeight: "900"
+  },
+  newDot: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "900"
   },
   whiteText: {
     color: "white",
