@@ -13,7 +13,7 @@ export default function TabTwoScreen() {
   
   const handleSearchSubmit = () => {
     console.log(searchText);
-    router.push(`/modal?searchText=${encodeURIComponent(searchText)}`);
+    router.push("/modal"); //`/modal?searchText=${encodeURIComponent(searchText)}`
   };
   
   return (
