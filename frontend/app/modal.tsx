@@ -1,19 +1,19 @@
+import { FontAwesome5 } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { FontAwesome5 } from "@expo/vector-icons";
-import ProductBox, { ProductData } from "./ProductLister/ProductBox";
-import { defaultProductsData } from "./ProductLister/DefaultProduct";
+import getProducts from "./ProductLister/DefaultProduct";
 import FilterModal from "./ProductLister/FilterModal";
+import ProductBox, { ProductData } from "./ProductLister/ProductBox";
 import SortModal from "./ProductLister/SortModal";
 import styles from "./ProductLister/styles";
-import DescriptionModal from "./ProductLister/DescriptionModal";
 
 interface ProductListContainerProps {
   products?: ProductData[];
 }
 
 const ProductListContainer: React.FC<ProductListContainerProps> = ({}) => {
-  const [products, setProducts] = useState<ProductData[]>(defaultProductsData);
+  const [products, setProducts] = useState<ProductData[]>([]);
+  const [defaultProducts, setDefaultProducts] = useState<ProductData[]>([]);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [showSortModal, setShowSortModal] = useState(false);
@@ -39,6 +39,15 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({}) => {
   };
 
   useEffect(() => {
+    (async () => {
+      const products = await getProducts()
+      setDefaultProducts(products)
+      setProducts(products)
+    })();
+  }, []);
+
+
+  useEffect(() => {
     const sortedProducts = sortProducts(products, sortBy);
     // Check if the products have already been sorted
     if (JSON.stringify(sortedProducts) === JSON.stringify(products)) {
@@ -62,7 +71,7 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({}) => {
 
   const applyFilters = (filters: any) => {
     // Apply filters to update the list of products
-    let filteredProducts = [...defaultProductsData];
+    let filteredProducts = [...defaultProducts];
 
     if (filters.minPrice !== undefined) {
       filteredProducts = filteredProducts.filter(
