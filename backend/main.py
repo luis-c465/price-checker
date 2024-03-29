@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 
-from util import serialize_product
+from util import longest_common_substring, serialize_product
 
 load_dotenv()
 from flask import Flask, jsonify, request
@@ -19,8 +19,13 @@ def users():
 		return "You must put a query!", 400
 
 	products = text_search_all(query)
-	serialized = [serialize_product(p) for p in products if p != None]
-	return jsonify(*serialized)
+	products = [serialize_product(p) for p in products if p != None]
+	names = [name for p in serialize_product if (name := p.get("name", None)) != None]
+	return jsonify({
+		# At least 30 percent of products must contain the string
+		"name": longest_common_substring(names, threshold=30),
+		"products": products
+	})
 
 if __name__ == '__main__':
 	if not DEBUG:

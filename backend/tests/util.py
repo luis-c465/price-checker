@@ -38,6 +38,7 @@ class Test(TestCase):
         self.assertIsNotNone(a, "Product a is null!")
         self.assertIsNotNone(b, "Product b is null!")
 
+        self.assertKeyEqual(a, b, "name", "The names are not equal")
         self.assertKeyEqual(a, b, "price", "The prices are not equal")
         self.assertKeyEqual(a, b, "shipping", "The shipping prices are not equal")
         self.assertKeyEqual(a, b, "condition", "The condition of the items are not equal")

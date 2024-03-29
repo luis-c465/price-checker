@@ -48,4 +48,8 @@ class Product(TypedDict):
     url: str
     "The full url that the item was found on"
 
+    name: str
+    "The name of the product listing"
+
+
 PossibleProduct = Optional[Product]

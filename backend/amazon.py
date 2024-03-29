@@ -10,23 +10,15 @@ from _types import Condition, PossibleProduct
 from util import get_first_int, make_product_dict
 
 
-def scrape(url: str) -> PossibleProduct:
-    req = requests.get(url)
-    if 400 <= req.status_code < 600:
-        # The request it not ok
-        return None
-
-    html = req.text
-    page = BeautifulSoup(html, "lxml")
-    return scrape_w_soup(page, url)
-
-
 def scrape_w_soup(page: BeautifulSoup, url: str) -> PossibleProduct:
     """Takes in an already scraped and parsed page, and extracts the information
 
     Used separately for testing from already fetched pages
     """
     product_info = make_product_dict()
+
+    if name := _name(page, url):
+        product_info["name"] = name
 
     if price := _price(page, url):
         product_info["price"] = price
@@ -212,6 +204,20 @@ def _description(page: BeautifulSoup, url: str) -> Optional[str]:
     txt = elm.text.strip()
     if not txt or len(txt) == 0:
         logging.warning(f"@{url} description is empty")
+        return None
+
+    return txt
+
+def _name(page: BeautifulSoup, url: str) -> Optional[str]:
+    elm = page.select_one("#title > #productTitle")
+
+    if elm == None:
+        logging.warning(f"@{url} product name not found")
+        return None
+
+    txt = elm.text.strip()
+    if not txt or len(txt) == 0:
+        logging.warning(f"@{url} product name is empty")
         return None
 
     return txt
