@@ -20,9 +20,16 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({}) => {
   const [showUsedProducts, setShowUsedProducts] = useState(false);
   const [descriptionVisible, setDescriptionVisible] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(
+    null
+  );
 
-  const handleDescription = (description: string) => {
+  const handleDescriptionPress = (
+    description: string,
+    product: ProductData
+  ) => {
     setSelectedDescription(description);
+    setSelectedProduct(product);
     setDescriptionVisible(true);
   };
 
@@ -112,12 +119,13 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({}) => {
       </View>
       <ScrollView style={styles.scrollContainer}>
         {products.map((product, index) => (
-          <TouchableOpacity
+          <ProductBox
             key={index}
-            onPress={() => handleDescription(product.description)}
-          >
-            <ProductBox {...product} />
-          </TouchableOpacity>
+            onPressDescription={() =>
+              handleDescriptionPress(product.description, product)
+            }
+            {...product}
+          />
         ))}
       </ScrollView>
       <FilterModal
@@ -130,6 +138,14 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({}) => {
         onClose={() => setShowSortModal(false)}
         applySort={handleSortBy}
       />
+      {/* Render DescriptionModal if descriptionVisible is true */}
+      {selectedProduct && (
+        <DescriptionModal
+          visible={descriptionVisible}
+          onClose={() => setDescriptionVisible(false)}
+          productData={selectedProduct}
+        />
+      )}
     </View>
   );
 };

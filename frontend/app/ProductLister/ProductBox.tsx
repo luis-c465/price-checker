@@ -1,4 +1,3 @@
-// ProductBox.tsx
 import React, { useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import StarRating from "./StarRating";
@@ -6,11 +5,12 @@ import StarRating from "./StarRating";
 export interface ProductData {
   price: number;
   shipping: number;
-  condition?: boolean;
   seller: string;
   description: string;
-  num_ratings: number;
   rating: number;
+  isNew: boolean;
+  condition: boolean;
+  num_ratings: number;
   photos: string[];
   seller_num_ratings: number;
   seller_avg_ratings: number;
@@ -18,10 +18,11 @@ export interface ProductData {
   quantity: number;
   lastUpdatedAt: string;
   url: string;
-  isNew: boolean;
 }
 
-interface ProductBoxProps extends ProductData {}
+interface ProductBoxProps extends ProductData {
+  onPressDescription: () => void;
+}
 
 const ProductBox: React.FC<ProductBoxProps> = ({
   price,
@@ -30,6 +31,7 @@ const ProductBox: React.FC<ProductBoxProps> = ({
   description,
   rating,
   isNew,
+  onPressDescription,
 }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
 
@@ -54,10 +56,8 @@ const ProductBox: React.FC<ProductBoxProps> = ({
         <Text style={styles.whiteText}>
           <Text style={styles.bold}>Seller/Brand:</Text> {seller}
         </Text>
-        <TouchableOpacity onPress={() => setShowFullDescription(true)}>
-          <Text style={styles.description}>
-            <Text style={styles.bold}>Description</Text> {}
-          </Text>
+        <TouchableOpacity onPress={onPressDescription}>
+          <Text style={styles.description}>Description</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.starOverlay}>

@@ -1,5 +1,14 @@
-import React, { useState } from "react";
-import { Modal, Text, TouchableOpacity, View, TextInput } from "react-native";
+import React from "react";
+import {
+  Modal,
+  TouchableOpacity,
+  Text,
+  View,
+  TextInput,
+  TouchableWithoutFeedback,
+  Keyboard,
+  StyleSheet,
+} from "react-native";
 import styles from "./styles";
 
 interface FilterModalProps {
@@ -13,10 +22,10 @@ const FilterModal: React.FC<FilterModalProps> = ({
   visible,
   onClose,
 }) => {
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [minRating, setMinRating] = useState("");
-  const [isNew, setIsNew] = useState(false);
+  const [minPrice, setMinPrice] = React.useState("");
+  const [maxPrice, setMaxPrice] = React.useState("");
+  const [minRating, setMinRating] = React.useState("");
+  const [isNew, setIsNew] = React.useState(false);
 
   const handleApplyFilters = () => {
     applyFilters({
@@ -27,6 +36,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
     });
     onClose();
   };
+
   const handleResetFilters = () => {
     setMinPrice("");
     setMaxPrice("");
@@ -47,127 +57,92 @@ const FilterModal: React.FC<FilterModalProps> = ({
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <TouchableOpacity onPress={onClose}>
-            <Text style={styles.textStyle}>Close</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.sectionTitle}>Price Range</Text>
-          <View style={styles.priceRangeContainer}>
-            <TextInput
-              placeholder="Min Price"
-              value={minPrice}
-              onChangeText={setMinPrice}
-              keyboardType="numeric"
-              style={styles.input}
-            />
-            <Text style={styles.rangeSeparator}>-</Text>
-            <TextInput
-              placeholder="Max Price"
-              value={maxPrice}
-              onChangeText={setMaxPrice}
-              keyboardType="numeric"
-              style={styles.input}
-            />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TouchableOpacity onPress={onClose}>
+              <View style={styles.cancelButton}></View>
+            </TouchableOpacity>
+            <Text style={styles.sectionTitle}>Price Range</Text>
+            <View style={styles.priceRangeContainer}>
+              <TextInput
+                placeholder="Min Price"
+                value={minPrice}
+                onChangeText={setMinPrice}
+                keyboardType="number-pad"
+                style={styles.input}
+              />
+              <Text style={styles.rangeSeparator}>-</Text>
+              <TextInput
+                placeholder="Max Price"
+                value={maxPrice}
+                onChangeText={setMaxPrice}
+                keyboardType="number-pad"
+                style={styles.input}
+              />
+            </View>
+            <Text style={styles.sectionTitle}>Minimum Rating</Text>
+            <View style={styles.ratingOptions}>
+              {[5, 4, 3, 2, 1].map((rating) => (
+                <TouchableOpacity
+                  key={rating}
+                  onPress={() =>
+                    setMinRating((prevRating) =>
+                      prevRating === String(rating) ? "" : String(rating)
+                    )
+                  }
+                >
+                  <Text
+                    style={[
+                      styles.ratingOption,
+                      minRating === String(rating) && styles.selectedRating,
+                    ]}
+                  >
+                    {rating === 5 ? rating : `${rating}+`}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text style={styles.sectionTitle}>Condition</Text>
+            <View style={styles.conditionOptions}>
+              <TouchableOpacity onPress={() => setIsNew(true)}>
+                <Text
+                  style={[
+                    styles.conditionOption,
+                    isNew && styles.selectedCondition,
+                  ]}
+                >
+                  New
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setIsNew(false)}>
+                <Text
+                  style={[
+                    styles.conditionOption,
+                    !isNew && styles.selectedCondition,
+                  ]}
+                >
+                  Used
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                onPress={handleApplyFilters}
+                style={styles.applyButton}
+              >
+                <Text style={styles.buttonText}>Apply Filters</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleResetFilters}
+                style={styles.resetButton}
+              >
+                <Text style={styles.buttonText}>Reset Filters</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-
-          <Text style={styles.sectionTitle}>Minimum Rating</Text>
-          <View style={styles.ratingOptions}>
-            <TouchableOpacity onPress={() => setMinRating("5")}>
-              <Text
-                style={[
-                  styles.ratingOption,
-                  minRating === "5" && styles.selectedRating,
-                ]}
-              >
-                5
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setMinRating("4")}>
-              <Text
-                style={[
-                  styles.ratingOption,
-                  minRating === "4" && styles.selectedRating,
-                ]}
-              >
-                4+
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setMinRating("3")}>
-              <Text
-                style={[
-                  styles.ratingOption,
-                  minRating === "3" && styles.selectedRating,
-                ]}
-              >
-                3+
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setMinRating("2")}>
-              <Text
-                style={[
-                  styles.ratingOption,
-                  minRating === "2" && styles.selectedRating,
-                ]}
-              >
-                2+
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setMinRating("1")}>
-              <Text
-                style={[
-                  styles.ratingOption,
-                  minRating === "1" && styles.selectedRating,
-                ]}
-              >
-                1+
-              </Text>
-            </TouchableOpacity>
-            {/* Add more rating options if needed */}
-          </View>
-
-          <Text style={styles.sectionTitle}>Condition</Text>
-          <View style={styles.conditionOptions}>
-            <TouchableOpacity onPress={() => setIsNew(true)}>
-              <Text
-                style={[
-                  styles.conditionOption,
-                  isNew && styles.selectedCondition,
-                ]}
-              >
-                New
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setIsNew(false)}>
-              <Text
-                style={[
-                  styles.conditionOption,
-                  !isNew && styles.selectedCondition,
-                ]}
-              >
-                Used
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity
-            onPress={handleApplyFilters}
-            style={styles.applyButton}
-          >
-            <Text style={styles.applyButtonText}>Apply Filters</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleResetFilters}
-            style={styles.resetButton}
-          >
-            <Text style={styles.resetButtonText}>Reset Filters</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
-            <Text style={styles.cancelButtonText}>Cancel</Text>
-          </TouchableOpacity>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };

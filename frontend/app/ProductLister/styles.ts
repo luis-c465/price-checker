@@ -1,7 +1,7 @@
-// styles.ts
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+  // Global Styles
   container: {
     flex: 1,
     backgroundColor: "#000", // Dark background
@@ -15,10 +15,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    // Gradient orange header
+  },
+  gradient: {
+    flex: 1,
+    borderRadius: 5, // Adjust as needed
   },
   productName: {
-    fontSize: 22, // Larger font size
+    fontSize: 22,
     fontWeight: "bold",
     color: "#fff", // White text for dark mode
   },
@@ -88,6 +91,9 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 2,
   },
+  // End of Global Styles
+
+  // Specific Styles
   closeButton: {
     backgroundColor: "#FF6347",
     marginRight: 10,
@@ -177,8 +183,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   cancelButton: {
+    left: 150,
+    bottom: 30,
     backgroundColor: "#f44336",
-    borderRadius: 20,
+    borderRadius: 30,
     padding: 10,
     elevation: 2,
     marginTop: 10,
@@ -225,26 +233,19 @@ const styles = StyleSheet.create({
   productContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#333", // Darker box for dark mode
+    backgroundColor: "transparent", // Transparent background
     padding: 10,
     marginBottom: 10,
     borderRadius: 10, // Rounded corners
-    borderWidth: 2, // Add border
-    borderColor: "#fff", // White border for dark mode
+    borderWidth: 1, // Add border
+    borderColor: "orange", // Orange border for modern look
   },
   productPhoto: {
-    width: 120, // Larger product photos
+    width: 200, // Longer product photos
     height: 120,
     marginRight: 10,
     borderRadius: 10, // Rounded corners
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5, // Shadow for product boxes
+    // Shadow removed for a cleaner look
   },
 });
 
