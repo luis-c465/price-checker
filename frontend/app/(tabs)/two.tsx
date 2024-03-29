@@ -20,23 +20,11 @@ import { StackNavigationProp } from '@react-navigation/stack';
 export default function TabTwoScreen() {
   const [searchText, setSearchText] = useState("");
   const navigation = useNavigation();
-  
-  //const location = useLocation();
 
-  //const router = useRouter();
-  
-  //const encodedSearchText = encodeURIComponent(searchText);
-  
   const handleSearchSubmit = () => {
     console.log(searchText);
     const encodedSearchText = encodeURIComponent(searchText);
-    router.push({})
-     //insert navigation path here
-  //navigate({
-    //pathname: "/modal",
-    //search: `encodedData=${encodedSearchText}`,
-  //})
-    //router.push("/modal"); //`/modal?searchText=${encodeURIComponent(searchText)}`
+    router.navigate({pathname: "/modal", params: {query: searchText}})
   };
   
   return (

@@ -1,5 +1,5 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
+import { Link, Tabs, useLocalSearchParams } from 'expo-router';
 import React from 'react';
 import { Pressable } from 'react-native';
 
@@ -17,13 +17,7 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  //const location = useLocation();
-  
-  //the search bar parameters:
-  //const searchParams = new URLSearchParams(location.search);
-  //const decodedSearchText = searchParams.get("encodedData");
-  //const encodedData = searchParams.get('encodedData');
-  //const decodedSearchText = encodedData ? decodeURIComponent(encodedData) : '';
+  const local = useLocalSearchParams();
 
   return (
     <Tabs
@@ -50,7 +44,7 @@ export default function TabLayout() {
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                   <Text style={{ color: Colors[colorScheme ?? 'light'].text }}>
-                    "Test"
+                    Test
                   </Text>
                 </>
                 )}
