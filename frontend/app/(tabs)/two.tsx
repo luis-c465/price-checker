@@ -1,19 +1,42 @@
 import { StyleSheet, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
+import { router } from 'expo-router';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native';
+import { useNavigate, useLocation, Router } from 'react-router-dom';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+//type RootStackParamList = {
+//  '/modal': { searchText: string };
+//
+//};
+
+//type NavigationProp = StackNavigationProp<RootStackParamList, '/modal'>;
 
 export default function TabTwoScreen() {
-  const router = useRouter();
   const [searchText, setSearchText] = useState("");
+  const navigation = useNavigation();
+  
+  //const location = useLocation();
+
+  //const router = useRouter();
+  
+  //const encodedSearchText = encodeURIComponent(searchText);
   
   const handleSearchSubmit = () => {
     console.log(searchText);
-    router.push("/modal"); //`/modal?searchText=${encodeURIComponent(searchText)}`
+    const encodedSearchText = encodeURIComponent(searchText);
+    router.push({})
+     //insert navigation path here
+  //navigate({
+    //pathname: "/modal",
+    //search: `encodedData=${encodedSearchText}`,
+  //})
+    //router.push("/modal"); //`/modal?searchText=${encodeURIComponent(searchText)}`
   };
   
   return (

@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import ProductBox, { ProductData } from "./ProductLister/ProductBox";
+import ProductBox, { ProductData } from "../../ProductLister/ProductBox";
 
 interface ProductListContainerProps {
   products?: ProductData[];
