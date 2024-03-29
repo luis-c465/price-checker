@@ -19,7 +19,8 @@ def make_product_dict() -> Product:
         "quantity": -1,
         "description": "",
         "lastUpdatedAt": _EPOCH,
-        "url": None
+        "url": None,
+        "name": None
     }
 
 
