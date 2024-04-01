@@ -25,9 +25,10 @@ class TestEbay(Test):
             "seller_avg_ratings": 100,
             "measurements": "",
             "quantity": 1,
-            "description": "Amogus statue-great gift, desk ornament, joke  large and red. "
+            "description": "Amogus statue-great gift, desk ornament, joke  large and red. ",
+            "name": "Amogus statue-great gift, desk ornament, joke  large and red",
         }
-        self.assertDictEqual(output, should)
+        self.assertProductsEqual(output, should)
 
     def test_fuse(self):
         url = "https://www.ebay.com/itm/166500278950"
@@ -45,9 +46,10 @@ class TestEbay(Test):
             "seller_avg_ratings": 100,
             "measurements": "",
             "quantity": -1,
-            "description": "Find many great new & used options and get the best deals for SIBA CERAMIC FUSE | 6.3X32MM | Time Delay | T200mA | 7006565.0.200 | 500V at the best online prices at eBay! Free shipping for many products!"
+            "description": "Find many great new & used options and get the best deals for SIBA CERAMIC FUSE | 6.3X32MM | Time Delay | T200mA | 7006565.0.200 | 500V at the best online prices at eBay! Free shipping for many products!",
+            "name": "SIBA CERAMIC FUSE | 6.3X32MM | Time Delay | T200mA | 7006565.0.200 | 500V"
         }
-        self.assertDictEqual(output, should)
+        self.assertProductsEqual(output, should)
 
     def test_foundry(self):
         url = 'https://www.ebay.com/itm/322529066500'
@@ -67,10 +69,11 @@ class TestEbay(Test):
             "seller_avg_ratings": 99,
             "measurements": "",
             "quantity": -1,
-            "description": """Ideal for use with our graphite foundry crucibles; up to a #3 - 4 Kg. Tongs will firmly grip onto the lip of the crucible. This kit includes a No. 3 - 4 Kg Clay Graphite Foundry Crucible and a pair of 19" Hinge Style Foundry Crucible Tongs."""
+            "description": """Ideal for use with our graphite foundry crucibles; up to a #3 - 4 Kg. Tongs will firmly grip onto the lip of the crucible. This kit includes a No. 3 - 4 Kg Clay Graphite Foundry Crucible and a pair of 19" Hinge Style Foundry Crucible Tongs.""",
+            "name": "No 3 - 4 Kg Clay Graphite Foundry Crucible 19\" Hinge Tongs Metal Casting Set"
         }
 
-        self.assertDictEqual(output, should)
+        self.assertProductsEqual(output, should)
 
 if __name__ == "__main__":
     unittest.main()

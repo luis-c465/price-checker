@@ -1,3 +1,4 @@
+import datetime
 import enum
 from typing import Optional, TypedDict
 
@@ -40,5 +41,15 @@ class Product(TypedDict):
 
     description: str
     "The description of the item, either from the seller or the product page"
+
+    lastUpdatedAt: datetime.datetime
+    "The date time which the product information was last updated at"
+
+    url: str
+    "The full url that the item was found on"
+
+    name: str
+    "The name of the product listing"
+
 
 PossibleProduct = Optional[Product]
