@@ -1,122 +1,139 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Camera, CameraType, FlashMode } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
-import { useNavigation } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useRef, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native";
+import { ImagePicker } from 'expo-image-multiple-picker';
 
 export default function CameraScreen() {
   const [showCamera, setShowCamera] = useState(false);
-  const nav = useNavigation()
-
-  nav.addListener("focus", () => {
-    setShowCamera(true)
-  })
-
-  nav.addListener("blur", () => {
-    setShowCamera(false)
-  })
-
-
-  const [hasCameraPermission, setHasCameraPermission] = useState<
-    boolean | null
-  >(null);
-  const [image, setImage] = useState<string | null>(null);
+  const nav = useNavigation();
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const [images, setImages] = useState<string[]>([]);
   const [type, setType] = useState(CameraType.back);
-  const [flash, setFlash] = useState(FlashMode.off); // Initialize FlashMode state //not working
-  const cameraRef = useRef<Camera>(null); // Add a ref to the camera for taking pictures
+  const [flash, setFlash] = useState(FlashMode.off);
+  const cameraRef = useRef<Camera>(null);
+  const [showPicker, setShowPicker] = useState(false);
+
+  useEffect(() => {
+    const unsubscribeFocus = nav.addListener("focus", () => {
+      setShowCamera(true);
+    });
+    const unsubscribeBlur = nav.addListener("blur", () => {
+      setShowCamera(false);
+    });
+    return () => {
+      unsubscribeFocus();
+      unsubscribeBlur();
+    };
+  }, [nav]);
 
   useEffect(() => {
     (async () => {
-      MediaLibrary.requestPermissionsAsync();
-      const cameraStatus = await Camera.requestCameraPermissionsAsync();
-      setHasCameraPermission(cameraStatus.status === "granted");
+      const { status: cameraStatus } = await Camera.requestCameraPermissionsAsync();
+      const { status: mediaStatus } = await MediaLibrary.requestPermissionsAsync();
+      setHasCameraPermission(cameraStatus === 'granted' && mediaStatus === 'granted');
     })();
   }, []);
+
+  if (hasCameraPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
 
   const takePicture = async () => {
     if (cameraRef.current) {
       try {
         const data = await cameraRef.current.takePictureAsync();
-        console.log(data);
-        setImage(data.uri);
+        setImages(prevImages => [...prevImages, data.uri]);
       } catch (e) {
         console.log(e);
       }
     }
   };
 
-  if (hasCameraPermission === false) {
-    return <Text>No access to camera</Text>;
-  }
-
-  //METHODS
-  //Method to flip camera
-  function toggleCameraType() {
-    setType((current) =>
-      current === CameraType.back ? CameraType.front : CameraType.back
-    );
-  }
-
-  // Method to toggle flash
-  const toggleFlash = () => {
-    setFlash(flash === FlashMode.off ? FlashMode.on : FlashMode.off);
+  const removeImage = (index: number) => {
+    setImages(images.filter((_, idx) => idx !== index));
   };
+
+  function toggleCameraType() {
+    setType(current => current === CameraType.back ? CameraType.front : CameraType.back);
+  }
+
+  const toggleFlash = () => {
+    setFlash(flash => flash === FlashMode.off ? FlashMode.on : FlashMode.off);
+  };
+
+  function handlePress() {
+    setShowPicker(current => !current);
+  }
+
+  const handleDone = () => {
+    console.log("Done button pressed");
+    console.log("Done with images:", images);
+  setImages([]);
+};
+
+  const renderImageThumbnails = () => images.map((uri, index) => (
+    <View key={index} style={styles.thumbnailContainer}>
+      <Image source={{ uri }} style={styles.thumbnail} />
+      <TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
+        <Text style={styles.removeButtonText}>X</Text>
+      </TouchableOpacity>
+    </View>
+  ));
 
   return (
     <View style={styles.container}>
-      {!image ? (
-        showCamera && <Camera
-          style={styles.camera}
-          type={type}
-          flashMode={flash}
-          ref={cameraRef}
-        >
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.flipButton}
-              onPress={toggleCameraType}
-            >
-              <Text style={styles.text}>↻</Text>
-            </TouchableOpacity>
+      {!showPicker && showCamera && (
+        <>
+          <Camera style={styles.camera} type={type} flashMode={flash} ref={cameraRef}>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.rightButtons} onPress={toggleCameraType}>
+                <Ionicons name="camera-reverse-outline" size={24} color="white" />
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.flashButton}
-              onPress={() => toggleFlash()}
-            >
-              <Ionicons
-                name="flash"
-                color={flash === FlashMode.off ? "gray" : "white"}
-                size={28}
-              />
+              <TouchableOpacity style={styles.rightButtons} onPress={toggleFlash}>
+                <Ionicons name={flash === FlashMode.off ? "flash-off-outline" : "flash-outline"} size={24} color="white" />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity style={styles.galleryButton} onPress={handlePress}>
+              <Ionicons name="images-outline" size={24} color="white" />
             </TouchableOpacity>
-          </View>
-        </Camera>
-      ) : (
-        <Image source={{ uri: image }} style={styles.camera} />
-      )}
-      <View>
-        {image ? (
-          <View>
-            <TouchableOpacity
-              style={styles.pictureTakenContainer}
-              onPress={() => setImage(null)}
-            >
-              <Text style={styles.text}>retake</Text>
+          </Camera>
+
+          <ScrollView horizontal style={styles.imagesContainer}>
+            {renderImageThumbnails()}
+          </ScrollView>
+
+          {images.length > 0 && (
+            <TouchableOpacity style={styles.doneButton} onPress={handleDone}>
+              <Text style={styles.doneButtonText}>DONE</Text>
             </TouchableOpacity>
-          </View>
-        ) : (
+          )}
+
           <View style={styles.cameraContainer}>
-            {/* Add a new TouchableOpacity for taking photos */}
-            <TouchableOpacity
-              style={styles.captureButton}
-              onPress={takePicture}
-            >
-              <Text style={styles.text}></Text>
+            <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
+              <Ionicons name="camera-outline" size={50} color="white" />
             </TouchableOpacity>
           </View>
-        )}
-      </View>
+        </>
+      )}
+
+      {showPicker && (
+        <ImagePicker
+          onSave={(assets) => {
+            const uris = assets.map(asset => asset.uri);
+            setImages(prevImages => [...prevImages, ...uris]);
+            setShowPicker(false);
+          }}
+          onCancel={() => setShowPicker(false)}
+          galleryColumns={4}
+          multiple
+          noAlbums
+        />
+      )}
     </View>
   );
 }
@@ -129,71 +146,83 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
   },
-
   buttonContainer: {
-    position: "absolute", // Position the container absolutely
-    right: 0, // Align to the right
-    top: 0, // Align to the top
-    padding: 20, // Add some padding to not stick to the edge
-    flexDirection: "column",
+    position: "absolute",
+    right: 20,
+    top: 20,
+    flexDirection: "row",
   },
-  flipButton: {
-    alignSelf: "center",
-    marginBottom: 15,
-    width: 50,
-    height: 50,
-    borderRadius: 35,
-    backgroundColor: "black",
+  rightButtons: {
+    marginLeft: 10,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 10,
+    borderRadius: 50,
+  },
+  galleryButton: {
+    position: "absolute",
+    left: 20,
+    top: 20,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 10,
+    borderRadius: 50,
+  },
+  imagesContainer: {
+    position: "absolute",
+    bottom: 100,
+    left: 0,
+    right: 0,
+    padding: 10,
+  },
+  thumbnailContainer: {
+    position: "relative",
+    marginRight: 5,
+  },
+  thumbnail: {
+    width: 100,
+    height: 100,
+  },
+  removeButton: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    backgroundColor: "red",
+    borderRadius: 15,
+    width: 30,
+    height: 30,
     justifyContent: "center",
     alignItems: "center",
   },
-  flashButton: {
-    alignSelf: "center",
-    marginBottom: 15,
-    width: 50,
-    height: 50,
-    borderRadius: 35,
-    backgroundColor: "black",
-    justifyContent: "center",
-    alignItems: "center",
+  removeButtonText: {
+    color: "white",
+    fontSize: 16,
   },
-  flipText: {
-    fontSize: 18,
-    color: "black",
+  doneButton: {
+    position: "absolute",
+    bottom: 35,
+    left: 255,
+    right: 30,
+    backgroundColor: "blue",
+    padding: 15,
+    borderRadius: 5,
+    zIndex: 1, // Ensure it's above other components
   },
-
-  pictureTakenContainer: {
-    position: "absolute", // Keep container positioned over camera view
-    left: 0, // Start from the left edge
-    right: 0, // Stretch to the right edge
-    bottom: 0, // Position at the bottom
-    padding: 20, // Add some padding around
-    backgroundColor: "black",
-    flexDirection: "row", // Align children in a row
-    justifyContent: "center", // Center children horizontally
-    alignItems: "flex-end", // Align children to the bottom (flex-end)
+  doneButtonText: {
+    textAlign: "center",
+    color: "white",
+    fontWeight: "bold",
   },
   cameraContainer: {
-    position: "absolute", // Keep container positioned over camera view
-    left: 0, // Start from the left edge
-    right: 0, // Stretch to the right edge
-    bottom: 0, // Position at the bottom
-    padding: 20, // Add some padding around
-    flexDirection: "row", // Align children in a row
-    justifyContent: "center", // Center children horizontally
-    alignItems: "flex-end", // Align children to the bottom (flex-end)
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 20,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   captureButton: {
-    width: 70,
-    height: 70,
-    borderRadius: 40,
-    backgroundColor: "transparent", // Make background transparent
-    borderWidth: 4, // Add border width
-    borderColor: "#FFF", // Set border color to white or any color of your choice
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 50,
+    padding: 15,
   },
 });
