@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import ProductBox, { ProductData } from "./ProductBox";
 import { defaultProductsData } from "./DefaultProduct";
@@ -15,6 +15,7 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({}) => {
   const [products, setProducts] = useState<ProductData[]>(defaultProductsData);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [sortBy, setSortBy] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const sortProducts = (products: ProductData[], sortBy: string | null) => {
     if (sortBy === "Price") {
@@ -27,12 +28,16 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({}) => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => { //Testing for loading circle with a delay
     const sortedProducts = sortProducts(products, sortBy);
     // Check if the products have already been sorted
     if (JSON.stringify(sortedProducts) === JSON.stringify(products)) {
       return;
     }
     setProducts(sortedProducts);
+    setIsLoading(false);
+    }, 2000); // 2 second delay
   }, [sortBy]);
 
   const [showSortModal, setShowSortModal] = useState(false);
@@ -95,9 +100,12 @@ const ProductListContainer: React.FC<ProductListContainerProps> = ({}) => {
         </TouchableOpacity>
       </View>
       <ScrollView style={styles.scrollContainer}>
-        {products.map((product, index) => (
+        {isLoading ? (
+          <ActivityIndicator size="large" color="#0000ff" /> ) : (
+        products.map((product, index) => (
           <ProductBox key={index} {...product} />
-        ))}
+        ))
+        )}
       </ScrollView>
       <FilterModal
         visible={showFilterModal}

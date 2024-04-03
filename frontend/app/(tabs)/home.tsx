@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { StyleSheet, TextInput, ScrollView, FlatList } from 'react-native';
+import { Keyboard, StyleSheet, TextInput, ScrollView, FlatList, TouchableWithoutFeedback } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
@@ -16,6 +16,7 @@ export default function HomeScreen() {
   };
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <SafeAreaView style={styles.container}>
         <View style={styles.titleContainer}>
         </View>
@@ -35,7 +36,7 @@ export default function HomeScreen() {
             <Text style={styles.creditsText}>Developed by Luis Canada, Marcos Carillo, Jaime Diaz, Xavier Williams, Salvador Frias, Dwene Louis, and Enrique Dominguez</Text>
           </View>
     </SafeAreaView>
-    // <EditScreenInfo path="app/(tabs)/two.tsx" />
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: 'Futura',
     fontWeight: 'bold',
-    fontSize: 35,
+    fontSize: 31,
     textAlign: 'left',
     color: 'black',
     borderColor: 'black',
