@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 0,
     lineHeight: 35,
-    paddingTop: 8,
+    paddingTop: 0,
     alignSelf: 'center',
   },
   searchBar: {
