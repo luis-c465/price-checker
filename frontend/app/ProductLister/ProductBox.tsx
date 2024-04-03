@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Linking,
+} from "react-native";
 import StarRating from "./StarRating";
 
 export interface ProductData {
@@ -32,18 +39,25 @@ const ProductBox: React.FC<ProductBoxProps> = ({
   rating,
   isNew,
   onPressDescription,
+  num_ratings,
+  url,
 }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
 
   // Calculate the number of empty stars (5 - rating)
   const filledStars = Math.round(rating);
   const emptyStars = 5 - filledStars;
-
+  const handleRedirect = () => {
+    Linking.openURL(
+      "https://www.amazon.com/s?k=bass&i=stripbooks&ref=nb_sb_noss"
+    ).catch((err) => console.error("Failed to open URL: ", err));
+  };
   return (
     <View style={styles.productBox}>
       {isNew && (
         <View style={styles.newLabel}>
           <Text style={styles.newText}>New</Text>
+          <Text style={styles.newDot}>•</Text>
         </View>
       )}
       <View style={styles.content}>
@@ -62,6 +76,13 @@ const ProductBox: React.FC<ProductBoxProps> = ({
       </View>
       <View style={styles.starOverlay}>
         <StarRating rating={rating} />
+        <TouchableOpacity onPress={handleRedirect} style={styles.redirectBox}>
+          <Text style={styles.redirectText}>Redirect</Text>
+        </TouchableOpacity>
+        {/* Display number of ratings */}
+        <View style={styles.ratingCounter}>
+          <Text style={styles.ratingCounterText}>{num_ratings}</Text>
+        </View>
       </View>
       {/* Modal for full description */}
       <Modal
@@ -95,7 +116,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between", // Center items horizontally
     overflow: "visible", // Allow content to overflow the container
-    width: "80%", // Set a fixed width for the product box
+    width: "90%", // Set a fixed width for the product box
+    marginLeft: 30,
     position: "relative", // Ensure relative positioning for absolute elements
     alignSelf: "center", // Center the product boxes horizontally
     marginTop: 20, // Add some top margin to create space below the header
@@ -109,8 +131,12 @@ const styles = StyleSheet.create({
   },
   newLabel: {
     position: "absolute",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
     top: -10,
-    left: -20,
+    left: -40,
     backgroundColor: "red",
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -122,13 +148,19 @@ const styles = StyleSheet.create({
   newText: {
     color: "white",
     fontSize: 13,
-    transform: [{ rotate: "45deg" }],
+    fontWeight: "900",
+  },
+  newDot: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "900",
   },
   whiteText: {
     color: "white",
   },
   starOverlay: {
-    flexDirection: "row", // Ensure stars are aligned horizontally
+    flexDirection: "row",
+    transform: [{ translateX: -30 }], // Ensure stars are aligned horizontally
   },
   star: {
     color: "#ffd700",
@@ -167,6 +199,31 @@ const styles = StyleSheet.create({
   },
   closeText: {
     color: "white",
+  },
+  ratingCounter: {
+    position: "absolute",
+    top: 5,
+    transform: [{ translateX: 103 }, { translateY: -10 }], // Move the counter to the right
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 10,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+  },
+  ratingCounterText: {
+    color: "#fff",
+    fontSize: 12,
+  },
+  redirectBox: {
+    position: "absolute",
+    bottom: 10,
+    left: 10,
+    backgroundColor: "blue",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  redirectText: {
+    color: "#fff",
   },
 });
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-import ProductBox, { ProductData } from ".//ProductBox";
+import ProductBox, { ProductData } from "./ProductBox";
 import { defaultProductsData } from ".//DefaultProduct";
 import FilterModal from ".//FilterModal";
 import SortModal from ".//SortModal";

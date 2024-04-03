@@ -31,6 +31,9 @@ const SortModal: React.FC<SortModalProps> = ({
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
+          <TouchableOpacity onPress={onClose}>
+            <View style={styles.sortModalCancelButton}></View>
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => handleSortOption("Rating")}>
             <Text
               style={
@@ -63,9 +66,6 @@ const SortModal: React.FC<SortModalProps> = ({
             >
               Sort By Price: High to Low
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onClose}>
-            <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -75,9 +75,21 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  DescriptionModal: {
+    marginTop: 50,
+    height: "80%", // adjust as needed
+    width: "90%", // adjust as needed
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+  },
   textStyle: {
     color: "white",
-    fontWeight: "bold",
     textAlign: "center",
   },
   buttonContainer: {
@@ -182,7 +194,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
   },
-  cancelButton: {
+  filterModalCancelButton: {
     left: 150,
     bottom: 30,
     backgroundColor: "#f44336",
@@ -190,6 +202,25 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 2,
     marginTop: 10,
+  },
+  sortModalCancelButton: {
+    left: 120,
+    bottom: 30,
+    backgroundColor: "#f44336",
+    borderRadius: 30,
+    padding: 10,
+    elevation: 2,
+    marginTop: 10,
+  },
+  DescriptionModalCancelButton: {
+    left: 260,
+    bottom: 20,
+    backgroundColor: "#f44336",
+    borderRadius: 30,
+    padding: 10,
+    elevation: 2,
+    marginTop: 10,
+    width: 20,
   },
   cancelButtonText: {
     color: "white",
@@ -229,6 +260,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     fontWeight: "bold",
     marginBottom: 5,
+    color: "#fff", // White text for dark mode
   },
   productContainer: {
     flexDirection: "row",

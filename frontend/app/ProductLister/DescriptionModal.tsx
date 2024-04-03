@@ -29,40 +29,42 @@ const DescriptionModal: React.FC<DescriptionModalProps> = ({
       onRequestClose={onClose}
     >
       <View style={styles.modalContainer}>
-        <ScrollView style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Description</Text>
-          <View style={styles.categoryContainer}>
-            <Text style={styles.categoryTitle}>Photos:</Text>
-            <ScrollView horizontal={true}>
-              {productData.photos.map((photo, index) => (
-                <Image
-                  key={index}
-                  source={{ uri: photo }}
-                  style={styles.productPhoto}
-                />
-              ))}
-            </ScrollView>
-          </View>
-          <View style={styles.categoryContainer}>
-            <Text style={styles.categoryTitle}>Measurements:</Text>
-            <Text>{productData.measurements}</Text>
-          </View>
-          <View style={styles.categoryContainer}>
-            <Text style={styles.categoryTitle}>Description:</Text>
-            <Text>{productData.description}</Text>
-          </View>
-          <View style={styles.categoryContainer}>
-            <Text style={styles.categoryTitle}>Quantity:</Text>
-            <Text>{productData.quantity}</Text>
-          </View>
-          <View style={styles.categoryContainer}>
-            <Text style={styles.categoryTitle}>Last Updated:</Text>
-            <Text>{productData.lastUpdatedAt}</Text>
-          </View>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Text style={styles.buttonText}>Close</Text>
+        <View style={styles.modalContent}>
+          <TouchableOpacity onPress={onClose}>
+            <View style={styles.DescriptionModalCancelButton}></View>
           </TouchableOpacity>
-        </ScrollView>
+          <Text style={styles.modalTitle}>Description</Text>
+          <ScrollView>
+            <View style={styles.categoryContainer}>
+              <Text style={styles.categoryTitle}>Photos:</Text>
+              <ScrollView horizontal={true}>
+                {productData.photos.map((photo, index) => (
+                  <Image
+                    key={index}
+                    source={{ uri: photo }}
+                    style={styles.productPhoto}
+                  />
+                ))}
+              </ScrollView>
+            </View>
+            <View style={styles.categoryContainer}>
+              <Text style={styles.categoryTitle}>Measurements:</Text>
+              <Text style={styles.textStyle}>{productData.measurements}</Text>
+            </View>
+            <View style={styles.categoryContainer}>
+              <Text style={styles.categoryTitle}>Description:</Text>
+              <Text style={styles.textStyle}>{productData.description}</Text>
+            </View>
+            <View style={styles.categoryContainer}>
+              <Text style={styles.categoryTitle}>Quantity:</Text>
+              <Text style={styles.textStyle}> {productData.quantity}</Text>
+            </View>
+            <View style={styles.categoryContainer}>
+              <Text style={styles.categoryTitle}>Last Updated:</Text>
+              <Text style={styles.textStyle}>{productData.lastUpdatedAt}</Text>
+            </View>
+          </ScrollView>
+        </View>
       </View>
     </Modal>
   );

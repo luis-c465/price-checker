@@ -61,7 +61,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <TouchableOpacity onPress={onClose}>
-              <View style={styles.cancelButton}></View>
+              <View style={styles.filterModalCancelButton}></View>
             </TouchableOpacity>
             <Text style={styles.sectionTitle}>Price Range</Text>
             <View style={styles.priceRangeContainer}>
