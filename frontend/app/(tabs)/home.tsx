@@ -18,24 +18,21 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
-        <Text style={styles.title}>Price Checker</Text>
-        <Text style={styles.textbody}>{'\n'}Project made during INIT Build 2024 for the Mobile Dev team. {'\n'}{'\n'}Search for a product, or snap a picture. {'\n'} We'll find the best price!</Text>
+        <Text style={styles.title}>Price{'\n'}Checker</Text>
+        <Text style={styles.textbody}>Search for a product, or snap a picture. {'\n'} We'll find the best price!</Text>
           <View style={styles.searchContainer}>
             <TextInput
               style={{...styles.searchBar, color: 'white'}}
               placeholder="Search..."
-              placeholderTextColor="white"
+              placeholderTextColor="gray"
               onChangeText={text => setSearchText(text)}
               onSubmitEditing={handleSearchSubmit}
             />
-              <Text style={styles.textbody}>Developed by: </Text>
-              <Text style={styles.textbody}>Luis Canada</Text>
-              <Text style={styles.textbody}>Marcos Carillo</Text>
-              <Text style={styles.textbody}>Jaime Diaz</Text>
-              <Text style={styles.textbody}>Xavier Williams</Text>
-              <Text style={styles.textbody}>Salvador Frias</Text>
-              <Text style={styles.textbody}>Dwene Louis</Text>
-              <Text style={styles.textbody}>Enrique Dominguez</Text>
+
+                
+          </View>
+          <View style={styles.creditsContainer}>
+            <Text style={styles.creditsText}>Developed by Luis Canada, Marcos Carillo, Jaime Diaz, Xavier Williams, Salvador Frias, Dwene Louis, and Enrique Dominguez</Text>
           </View>
       </View>
       
@@ -47,10 +44,12 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 5,
     alignItems: 'stretch',
     justifyContent: 'center',
-    backgroundColor: 'black',
+    backgroundColor: 'white',
+    borderColor: 'gray',
+    borderWidth: 2,
+    borderRadius: 6,
   },
   searchContainer: {
     //flex: 1,
@@ -61,16 +60,18 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingRight: 5,
     marginTop: 5,
+    backgroundColor: 'transparent',
+    borderColor: 'black',
+    borderWidth: 1,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-  },
-  separator: {
-    marginVertical: 0,
-    height: 1,
-    width: '80%',
+    color: 'black',
+    borderColor: 'black',
+    borderWidth: 1,
+    lineHeight: 21,
   },
   searchBar: {
     height: 40,
@@ -78,24 +79,33 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderWidth: 1,
     paddingLeft: 10,
-    marginBottom: 10,
-    borderRadius: 6,
+    borderRadius: 25,
   },
   textbody: {
-    fontSize: 15,
+    fontSize: 17,
     lineHeight: 17.5,
     textAlign: 'center',
     paddingHorizontal: 30,
     paddingBottom: 0,
-    marginBottom: 1,
+    marginBottom: 0,
+    color: 'black',
+    borderColor: 'black',
+    borderWidth: 1,
   },
-  contributorsList: {
-    height: 100,
-    marginTop: 2,
-    backgroundColor: 'black',
-    padding: 10,
-    borderRadius: 6,
-    borderWidth: .2,
-    borderColor: 'gray',
+  creditsText: {
+    fontSize: 11,
+    lineHeight: 13,
+    textAlign: 'center',
+    color: 'gray',
+    backgroundColor: 'transparent',
+    borderColor: 'black',
+    borderWidth: 1,
+    paddingHorizontal: 15,
   },
+  creditsContainer: {
+    backgroundColor: 'transparent',
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: 8,
+  }
 });
