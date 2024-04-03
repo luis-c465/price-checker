@@ -18,18 +18,18 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.container}>
-        <Text style={styles.title}>Price{'\n'}Checker</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Price{'\n'}Checker</Text>
+        </View>
         <Text style={styles.textbody}>Search for a product, or snap a picture. {'\n'} We'll find the best price!</Text>
           <View style={styles.searchContainer}>
             <TextInput
-              style={{...styles.searchBar, color: 'white'}}
+              style={{...styles.searchBar, color: 'black', fontFamily: 'Helvetica', fontSize: 14, fontWeight: 'normal'}}
               placeholder="Search..."
               placeholderTextColor="gray"
               onChangeText={text => setSearchText(text)}
               onSubmitEditing={handleSearchSubmit}
             />
-
-                
           </View>
           <View style={styles.creditsContainer}>
             <Text style={styles.creditsText}>Developed by Luis Canada, Marcos Carillo, Jaime Diaz, Xavier Williams, Salvador Frias, Dwene Louis, and Enrique Dominguez</Text>
@@ -44,22 +44,27 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'stretch',
-    justifyContent: 'center',
     backgroundColor: 'white',
     borderColor: 'gray',
     borderWidth: 2,
     borderRadius: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleContainer: {
+    backgroundColor: 'white',
+    borderColor: 'gray',
+    borderWidth: 2,
+    borderRadius: 6,
+    justifyContent: 'flex-start',
   },
   searchContainer: {
     //flex: 1,
-    alignSelf: 'flex-start',
-    justifyContent: 'center',
+    alignSelf: 'center',
+    display: 'flex',
     width: '100%',
-    alignItems: 'stretch',
-    paddingLeft: 5,
-    paddingRight: 5,
-    marginTop: 5,
+    paddingHorizontal: 25,
+    marginTop: 0,
     backgroundColor: 'transparent',
     borderColor: 'black',
     borderWidth: 1,
@@ -76,10 +81,12 @@ const styles = StyleSheet.create({
   searchBar: {
     height: 40,
     width: '100%',
+    alignSelf: 'center',
     borderColor: 'gray',
-    borderWidth: 1,
-    paddingLeft: 10,
+    borderWidth: 0,
+    paddingHorizontal: 10,
     borderRadius: 25,
+    backgroundColor: '#E9E9E9',
   },
   textbody: {
     fontSize: 17,
@@ -104,8 +111,8 @@ const styles = StyleSheet.create({
   },
   creditsContainer: {
     backgroundColor: 'transparent',
-    flex: 1,
     justifyContent: 'flex-end',
     marginBottom: 8,
+    alignSelf: 'stretch',
   }
 });
