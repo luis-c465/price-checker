@@ -17,11 +17,10 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>Price{'\n'}Checker</Text>
+          <Text style={styles.textbody}>Search for a product, or snap a picture. {'\n'} We'll find the best price!</Text>
         </View>
-        <Text style={styles.textbody}>Search for a product, or snap a picture. {'\n'} We'll find the best price!</Text>
           <View style={styles.searchContainer}>
             <TextInput
               style={{...styles.searchBar, color: 'black', fontFamily: 'Helvetica', fontSize: 14, fontWeight: 'normal'}}
@@ -33,9 +32,7 @@ export default function HomeScreen() {
           </View>
           <View style={styles.creditsContainer}>
             <Text style={styles.creditsText}>Developed by Luis Canada, Marcos Carillo, Jaime Diaz, Xavier Williams, Salvador Frias, Dwene Louis, and Enrique Dominguez</Text>
-          </View>
       </View>
-      
     </SafeAreaView>
     // <EditScreenInfo path="app/(tabs)/two.tsx" />
   );
