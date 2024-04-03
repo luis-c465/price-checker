@@ -18,11 +18,10 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
         <View style={styles.titleContainer}>
-
         </View>
           <View style={styles.searchContainer}>
-          <Text style={styles.titleText}>Price{'\n'}Checker</Text>
-          <Text style={styles.textbody}>Enter a product, or snap a picture. We'll find the best price!</Text>
+            <Text style={styles.titleText}>Price{'\n'}Checker</Text>
+            <Text style={styles.textbody}>Enter a product or snap a picture. We'll find the best price!</Text>
             <TextInput
               style={{...styles.searchBar, color: 'black', fontFamily: 'Helvetica', fontSize: 14, fontWeight: 'normal'}}
               placeholder="Search..."
@@ -34,7 +33,7 @@ export default function HomeScreen() {
           </View>
           <View style={styles.creditsContainer}>
             <Text style={styles.creditsText}>Developed by Luis Canada, Marcos Carillo, Jaime Diaz, Xavier Williams, Salvador Frias, Dwene Louis, and Enrique Dominguez</Text>
-      </View>
+          </View>
     </SafeAreaView>
     // <EditScreenInfo path="app/(tabs)/two.tsx" />
   );
@@ -45,7 +44,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     borderColor: 'gray',
-    borderWidth: 2,
+    borderWidth: 0,
     borderRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
@@ -54,13 +53,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
     borderColor: 'gray',
-    borderWidth: 2,
+    borderWidth: 0,
     borderRadius: 6,
-    justifyContent: 'flex-start',
   },
   searchContainer: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     alignSelf: 'center',
     display: 'flex',
     width: '100%',
@@ -68,18 +67,20 @@ const styles = StyleSheet.create({
     marginTop: 0,
     backgroundColor: 'transparent',
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: 0,
   },
   titleText: {
     flex: 1,
-    fontFamily: 'Helvetica',
+    fontFamily: 'Futura',
     fontWeight: 'bold',
     fontSize: 35,
-    textAlign: 'center',
+    textAlign: 'left',
     color: 'black',
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: 0,
     lineHeight: 35,
+    paddingTop: 8,
+    alignSelf: 'center',
   },
   searchBar: {
     height: 40,
@@ -93,6 +94,7 @@ const styles = StyleSheet.create({
   },
   textbody: {
     fontSize: 10,
+    alignSelf: 'center',
     fontFamily: 'SpaceMono-Regular',
     fontWeight: 'normal',
     lineHeight: 17.5,
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     color: 'black',
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: 0,
   },
   creditsText: {
     fontSize: 11,
@@ -111,7 +113,7 @@ const styles = StyleSheet.create({
     color: 'gray',
     backgroundColor: 'transparent',
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: 0,
     paddingHorizontal: 15,
   },
   creditsContainer: {
