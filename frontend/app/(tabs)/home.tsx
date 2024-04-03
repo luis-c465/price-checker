@@ -21,7 +21,7 @@ export default function HomeScreen() {
         </View>
           <View style={styles.searchContainer}>
             <Text style={styles.titleText}>Price{'\n'}Checker</Text>
-            <Text style={styles.textbody}>Enter a product or snap a picture. We'll find the best price!</Text>
+            <Text style={styles.textbody}>Enter a product or snap a picture to find the best price!</Text>
             <TextInput
               style={{...styles.searchBar, color: 'black', fontFamily: 'Helvetica', fontSize: 14, fontWeight: 'normal'}}
               placeholder="Search..."
