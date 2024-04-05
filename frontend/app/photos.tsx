@@ -68,20 +68,10 @@ function Photos({ images }: { images: ImageSearch[] }) {
           fontWeight: "700",
         }}
       >
-        Select the closest product
+        Select your product
       </Text>
 
       <View style={styles.cantFindContainer}>
-        <Text
-          style={{
-            color: "#94a3b8",
-            fontSize: 14,
-            textAlign: "center",
-          }}
-        >
-          Can't find it?
-        </Text>
-
         <TextInput
           style={{
             flexGrow: 2,
@@ -97,7 +87,8 @@ function Photos({ images }: { images: ImageSearch[] }) {
           onChangeText={setManualSearch}
           onSubmitEditing={() => onSearch(manualSearch)}
           keyboardType="ascii-capable"
-          placeholder="Enter a search query!"
+          placeholder="Cant find it? Put search query!"
+          placeholderTextColor="#64748b"
         />
       </View>
 

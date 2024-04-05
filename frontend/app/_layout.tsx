@@ -62,6 +62,10 @@ function RootLayoutNav() {
             options={{ headerShown: false, title: "Tabs" }}
           />
           <Stack.Screen
+            name="products/[query]/_layout.tsx"
+            options={{ headerShown: true, title: "Found Products" }}
+          />
+          <Stack.Screen
             name="photos"
             options={{ headerShown: true, title: "Photos" }}
           />
