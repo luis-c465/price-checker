@@ -1,48 +1,41 @@
 import { ImageSearch } from "@/server";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Portal } from "@gorhom/portal";
 import { ImageBackground } from "expo-image";
 import { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { PreviewModal } from "react-native-image-preview-reanimated";
 
 type ProductPhotoInfoProps = ImageSearch & {
-  onClick: () => void
-}
+  onClick: () => void;
+};
 
-export default function ProductPhotoInfo({ text, url, onClick }: ProductPhotoInfoProps) {
-  return (
-    <View style={styles.container}>
-      <ClickableImage url={url} />
-
-      <TouchableOpacity style={styles.productButton}>
-        <Text style={styles.text} numberOfLines={3}>
-          {text}
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-}
-
-const blurhash =
-  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
-
-function ClickableImage({ url }: { url: string }) {
+export default function ProductPhotoInfo({
+  text,
+  url,
+  onClick,
+}: ProductPhotoInfoProps) {
   const [showModal, setShowModal] = useState(false);
 
   return (
     <>
-      <View style={styles.imageContainer}>
-        <ImageBackground
-          style={styles.image}
-          source={url}
-          cachePolicy={"memory"}
-        >
+      <TouchableOpacity
+        style={styles.container}
+        onPress={onClick}
+      >
+        <ImageBackground style={styles.image} source={url} cachePolicy="memory">
+          <Text style={styles.text} numberOfLines={3}>
+            {text}
+          </Text>
+
           <TouchableOpacity
-            style={styles.imageButton}
+            style={styles.imageMaximizeBtn}
             onPress={() => setShowModal(true)}
-          />
+          >
+            <FontAwesome size={20} name="expand" color="#cbd5e1" />
+          </TouchableOpacity>
         </ImageBackground>
-      </View>
+      </TouchableOpacity>
 
       <Portal>
         <PreviewModal
@@ -63,45 +56,38 @@ function ClickableImage({ url }: { url: string }) {
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
-    gap: 5,
-    alignItems: "center",
-    padding: 10,
+    position: "relative",
     borderColor: "gray",
     borderWidth: 1,
     minHeight: 200,
-    minWidth: 150,
-    width: "48%"
+    margin: 5,
+    width: "48%",
   },
 
-  imageContainer: {
-    flex: 1,
-    justifyContent: "center",
-    height: "75%",
-    width: "100%",
-    resizeMode: "center",
-  },
-  imageButton: {
-    width: "100%",
-    height: "100%",
+  imageMaximizeBtn: {
+    position: "absolute",
+    top: 5,
+    right: 5,
+    width: 30,
+    height: 30,
+    color: "white",
+    backgroundColor: "rgba(71, 85, 105, 0.8)",
+    borderRadius: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: 'center'
   },
   image: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-end",
     overflow: "hidden",
-    borderRadius: 10
+    borderRadius: 10,
   },
   text: {
     color: "white",
     fontSize: 18,
     textAlign: "center",
+    backgroundColor: "rgba(71, 85, 105, 0.8)",
+    paddingTop: 3
   },
-  productButton: {
-    width: "auto",
-    padding: 10,
-    margin: 0,
-    backgroundColor: "gray",
-    alignItems: "center",
-    paddingTop: 20,
-  }
 });

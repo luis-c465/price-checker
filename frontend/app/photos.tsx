@@ -54,7 +54,7 @@ function BigLoadingState() {
 function Photos({ images }: { images: ImageSearch[] }) {
   const [manualSearch, setManualSearch] = useState("");
   function onSearch(query: string) {
-    console.log("did cool", query)
+    console.log("did cool", query);
   }
 
   return (
@@ -91,7 +91,7 @@ function Photos({ images }: { images: ImageSearch[] }) {
             borderWidth: 1,
             borderColor: "#334155",
             borderRadius: 5,
-            color: "#94a3b8"
+            color: "#94a3b8",
           }}
           value={manualSearch}
           onChangeText={setManualSearch}
@@ -106,7 +106,11 @@ function Photos({ images }: { images: ImageSearch[] }) {
         data={images}
         numColumns={2}
         renderItem={(d) => (
-          <ProductPhotoInfo url={d.item.url} text={d.item.text} />
+          <ProductPhotoInfo
+            url={d.item.url}
+            text={d.item.text}
+            onClick={() => onSearch(d.item.text)}
+          />
         )}
         keyExtractor={(_, i) => `${i}`}
       />
@@ -126,12 +130,14 @@ const styles = StyleSheet.create({
     display: "flex",
     gap: 20,
     flexWrap: "wrap",
-    flexDirection: "row"
+    flexDirection: "row",
   },
   photosContainer: {
     flex: 1,
     flexDirection: "column",
-    flexWrap: "wrap"
+    flexWrap: "wrap",
+    alignItems: 'center',
+    marginTop: 5
   },
   cantFindContainer: {
     display: "flex",
@@ -142,6 +148,6 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     alignItems: "center",
     padding: 5,
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
 });
