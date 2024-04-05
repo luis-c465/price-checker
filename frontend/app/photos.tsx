@@ -1,3 +1,147 @@
+import { imagesAtom } from "@/atoms";
+import ProductPhotoInfo from "@/components/ProductPhotoInfo";
+import { ImageSearch, getImageSearchResponse } from "@/server";
+import { useAtomValue } from "jotai";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+
 export default function PhotoAnalyzer() {
-  // show a list of photos here
+  const images = useAtomValue(imagesAtom);
+  const [loading, setLoading] = useState(true);
+  const [serverData, setServerData] = useState<ImageSearch[]>();
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const response = await getImageSearchResponse(images);
+        setServerData(response.proudcts);
+      } catch (e) {
+        console.error(`Error occurred when fetching data from server!`);
+        console.error(e);
+      }
+
+      setLoading(false);
+    })();
+  }, [images]);
+
+  if (loading) {
+    return <BigLoadingState />;
+  } else {
+    return <Photos images={serverData!} />;
+  }
 }
+
+function BigLoadingState() {
+  return (
+    <View style={styles.bigLoad}>
+      <Text>Analayzing the taken photos!</Text>
+
+      <Text style={{ color: "gray" }}>This may take a while</Text>
+
+      <ActivityIndicator size="large" />
+    </View>
+  );
+}
+
+function Photos({ images }: { images: ImageSearch[] }) {
+  const [manualSearch, setManualSearch] = useState("");
+  function onSearch(query: string) {
+    console.log("did cool", query)
+  }
+
+  return (
+    <View style={styles.photosContainer}>
+      <Text
+        style={{
+          color: "white",
+          fontSize: 20,
+          textAlign: "center",
+          padding: 5,
+          fontWeight: "700",
+        }}
+      >
+        Select the closest product
+      </Text>
+
+      <View style={styles.cantFindContainer}>
+        <Text
+          style={{
+            color: "#94a3b8",
+            fontSize: 14,
+            textAlign: "center",
+          }}
+        >
+          Can't find it?
+        </Text>
+
+        <TextInput
+          style={{
+            flexGrow: 2,
+            height: "100%",
+            paddingHorizontal: 10,
+            paddingVertical: 3,
+            borderWidth: 1,
+            borderColor: "#334155",
+            borderRadius: 5,
+            color: "#94a3b8"
+          }}
+          value={manualSearch}
+          onChangeText={setManualSearch}
+          onSubmitEditing={() => onSearch(manualSearch)}
+          keyboardType="ascii-capable"
+          placeholder="Enter a search query!"
+        />
+      </View>
+
+      <FlatList
+        style={styles.photos}
+        data={images}
+        numColumns={2}
+        renderItem={(d) => (
+          <ProductPhotoInfo url={d.item.url} text={d.item.text} />
+        )}
+        keyExtractor={(_, i) => `${i}`}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  bigLoad: {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  photos: {
+    display: "flex",
+    gap: 20,
+    flexWrap: "wrap",
+    flexDirection: "row"
+  },
+  photosContainer: {
+    flex: 1,
+    flexDirection: "column",
+    flexWrap: "wrap"
+  },
+  cantFindContainer: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 20,
+    height: 40,
+    width: "100%",
+    flexWrap: "wrap",
+    alignItems: "center",
+    padding: 5,
+    justifyContent: "space-between"
+  },
+});

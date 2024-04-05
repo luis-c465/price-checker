@@ -1,8 +1,11 @@
+import { imagesAtom } from "@/atoms";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Camera, CameraType, FlashMode } from "expo-camera";
 import { ImagePicker } from "expo-image-multiple-picker";
 import * as MediaLibrary from "expo-media-library";
+import { router } from "expo-router";
+import { useSetAtom } from "jotai";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Image,
@@ -24,6 +27,7 @@ export default function CameraScreen() {
   const [flash, setFlash] = useState(FlashMode.off);
   const cameraRef = useRef<Camera>(null);
   const [showPicker, setShowPicker] = useState(false);
+  const setImagesAtom = useSetAtom(imagesAtom)
 
   useEffect(() => {
     const unsubscribeFocus = nav.addListener("focus", () => {
@@ -85,9 +89,10 @@ export default function CameraScreen() {
     setShowPicker((current) => !current);
   }
 
-  const handleDone = () => {
-    console.log("Done button pressed");
+  const handleDone = async () => {
     console.log("Done with images:", images);
+    setImages([...images])
+    router.push("/photos")
     setImages([]);
   };
 

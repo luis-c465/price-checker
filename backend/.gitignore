@@ -230,3 +230,4 @@ pyrightconfig.json
 *.ipynb
 tmp/
 !test/tmp/.gitkeep
+*.json
