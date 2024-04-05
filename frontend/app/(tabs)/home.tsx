@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Keyboard, StyleSheet, TextInput, ScrollView, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { Image, Keyboard, StyleSheet, TextInput, ScrollView, FlatList, TouchableWithoutFeedback } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
@@ -21,7 +21,10 @@ export default function HomeScreen() {
         <View style={styles.titleContainer}>
         </View>
           <View style={styles.searchContainer}>
-            <Text style={styles.titleText}>Price{'\n'}Checker</Text>
+            <Image
+    style={{ width: 200, height: 100 }} // Adjust the dimensions as needed
+    source={require("../../assets/images/TradeHubLogoProj.png")} // Replace with the path to your image
+    />
             <Text style={styles.textbody}>Enter a product or snap a picture to find the best price!</Text>
             <TextInput
               style={{...styles.searchBar, color: 'black', fontFamily: 'Helvetica', fontSize: 14, fontWeight: 'normal'}}
@@ -37,6 +40,7 @@ export default function HomeScreen() {
           </View>
     </SafeAreaView>
     </TouchableWithoutFeedback>
+    // <Text style={styles.titleText}> Trade Hub</Text>
   );
 }
 
