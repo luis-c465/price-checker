@@ -1,187 +1,245 @@
-import getProducts from "@/app/ProductLister/DefaultProduct";
-import { FontAwesome5 } from "@expo/vector-icons"; // Assuming you're using Expo
-import { useLocalSearchParams } from "expo-router";
+import { FontAwesome5 } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
+  Animated,
+  Easing,
   Modal,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { defaultProductsData } from "../../ProductLister/DefaultProduct";
+import DescriptionModal from "../../ProductLister/DescriptionModal";
+import FilterModal from "../../ProductLister/FilterModal";
 import ProductBox, { ProductData } from "../../ProductLister/ProductBox";
+import styles from "../../ProductLister/styles";
 
 const ProductListContainer: React.FC = () => {
-  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [products, setProducts] = useState<ProductData[]>(defaultProductsData);
   const [showFilterModal, setShowFilterModal] = useState(false);
-  const [products, setProducts] = useState<ProductData[]>([]);
-  const {query} = useLocalSearchParams()
+  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [showSortingOptions, setShowSortingOptions] = useState(false);
+  const [selectedDescription, setSelectedDescription] = useState<string>("");
+  const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(
+    null
+  );
+  const [descriptionVisible, setDescriptionVisible] = useState<boolean>(false);
+
+  // Animated value for the gradient
+  const animatedValue = new Animated.Value(0);
 
   useEffect(() => {
-    (async () => {
-      setProducts(await getProducts(query as string));
-    })()
+    // Start the animation when the component mounts
+    Animated.timing(animatedValue, {
+      toValue: 1,
+      duration: 1500, // Adjust the duration of the animation as needed
+      easing: Easing.linear,
+      useNativeDriver: false,
+    }).start();
   }, []);
 
-  // Function to handle sorting
+  const interpolateColors = animatedValue.interpolate({
+    inputRange: [0, 0.17, 0.33, 0.5, 0.67, 0.83, 0.94, 1],
+    outputRange: [
+      "#ff0000",
+      "#ff7f00",
+      "#ffff00",
+      "#00ff00",
+      "#0000ff",
+      "#4b0082",
+      "#9400d3",
+      "#000000",
+    ],
+  });
+
+  const animatedStyle = {
+    color: interpolateColors,
+  };
+
+  const handleDescriptionPress = (
+    description: string,
+    product: ProductData
+  ) => {
+    setSelectedDescription(description);
+    setSelectedProduct(product);
+    setDescriptionVisible(true);
+  };
+
   const handleSortBy = (option: string | null) => {
-    setSortBy(option ?? null); // Use nullish coalescing operator to handle null values
+    setSortBy(option);
+    setShowSortingOptions(false);
   };
 
-  // Function to handle filtering
-  const handleFilter = () => {
-    setShowFilterModal(true);
-  };
-
-  // Function to apply filters
   const applyFilters = (filters: any) => {
-    // Apply filters to products
-    console.log("Applied filters:", filters);
+    // Apply filters to update the list of products
+    let filteredProducts = [...defaultProductsData];
+
+    if (filters.minPrice !== undefined) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.price >= filters.minPrice
+      );
+    }
+    if (filters.maxPrice !== undefined) {
+      filteredProducts = filteredProducts.filter(
+        (product) => product.price <= filters.maxPrice
+      );
+    }
+    if (filters.minRating !== undefined) {
+      // Adjust the condition to include products with ratings equal to or greater than the selected rating
+      filteredProducts = filteredProducts.filter(
+        (product) => product.rating >= filters.minRating
+      );
+    }
+    if (filters.condition !== undefined) {
+      if (filters.condition === "New") {
+        filteredProducts = filteredProducts.filter(
+          (product) => product.isNew === true
+        );
+      } else if (filters.condition === "Used") {
+        filteredProducts = filteredProducts.filter(
+          (product) => product.isNew === false
+        );
+      }
+    }
+
+    // Update the list of products with the filtered products
+    setProducts(filteredProducts);
     setShowFilterModal(false);
   };
 
-  // Filter modal content
-  const FilterModal = () => {
-    // Define filtering options here
-    // For demonstration, I'm just showing some example options
-    const filterOptions: Record<string, string[]> = {
-      shipping: ["Available", "Not Available"],
-      priceRange: ["Under $20", "$20 - $50", "Over $50"],
-      rating: [
-        "5 Stars",
-        "4 Stars & Up",
-        "3 Stars & Up",
-        "2 Stars & Up",
-        "1 Star & Up",
-      ],
-      seller: ["Walmart", "Target"],
+  useEffect(() => {
+    const sortProducts = (products: ProductData[], sortBy: string | null) => {
+      if (sortBy === "Price") {
+        return [...products].sort((a, b) => a.price - b.price);
+      } else if (sortBy === "Price-desc") {
+        return [...products].sort((a, b) => b.price - a.price);
+      } else if (sortBy === "Rating") {
+        return [...products].sort((a, b) => b.rating - a.rating);
+      } else {
+        return products;
+      }
     };
 
-    return (
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={showFilterModal}
-        onRequestClose={() => setShowFilterModal(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Filter Options</Text>
-            {/* Render filtering options here */}
-            {/* For demonstration, I'm just showing example options */}
-            {Object.keys(filterOptions).map((option, index) => (
-              <View key={index}>
-                <Text style={styles.filterOptionTitle}>{option}</Text>
-                {filterOptions[option].map((item, idx) => (
-                  <TouchableOpacity
-                    key={idx}
-                    style={styles.filterOption}
-                    onPress={() => applyFilters({ [option]: item })}
-                  >
-                    <Text>{item}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            ))}
-          </View>
-        </View>
-      </Modal>
-    );
-  };
-
-  // Function to sort products based on selected option
-  const sortProducts = (products: ProductData[]) => {
-    if (sortBy === "Price") {
-      // Sort by price
-      return products.sort((a, b) => a.price - b.price);
-    } else if (sortBy === "Rating") {
-      // Sort by rating
-      return products.sort((a, b) => b.rating - a.rating);
-    } else {
-      // No sorting applied
-      return products;
+    const sortedProducts = sortProducts(products, sortBy);
+    // Check if the products have already been sorted
+    if (JSON.stringify(sortedProducts) === JSON.stringify(products)) {
+      return;
     }
-  };
+    setProducts(sortedProducts);
+  }, [sortBy]);
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.productName}>Product Name</Text>
+        <Animated.Text style={[styles.productName, { ...animatedStyle }]}>
+          Product Name
+        </Animated.Text>
+        <TouchableOpacity
+          style={[styles.iconButton, styles.sortingContainer]}
+          onPress={() => setShowSortingOptions(!showSortingOptions)}
+        >
+          <Text style={styles.sortingOptionText}>
+            Sort By: {sortBy ? sortBy : "None"}
+          </Text>
+          <FontAwesome5 name="chevron-down" style={styles.filterIcon} />
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.iconButton}
-          onPress={() => handleSortBy(null)}
+          onPress={() => setShowFilterModal(true)}
         >
-          <FontAwesome5 name="sort" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton} onPress={handleFilter}>
-          <FontAwesome5 name="filter" size={24} color="black" />
+          <FontAwesome5 name="filter" style={styles.filterIcon} />
         </TouchableOpacity>
       </View>
-      {/* Product List */}
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Render sorted and filtered products */}
-        {sortProducts(products).map((product, index) => (
-          <ProductBox key={index} {...product} />
+      <ScrollView style={styles.scrollContainer}>
+        {products.map((product, index) => (
+          <ProductBox
+            key={index}
+            {...product}
+            onPressDescription={() =>
+              handleDescriptionPress(product.description, product)
+            }
+          />
         ))}
       </ScrollView>
-      {/* Filter Modal */}
-      <FilterModal />
+      <FilterModal
+        visible={showFilterModal}
+        onClose={() => setShowFilterModal(false)}
+        applyFilters={applyFilters}
+      />
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showSortingOptions}
+        onRequestClose={() => setShowSortingOptions(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setShowSortingOptions(false)}>
+          <View style={styles.sortingModalContainer}>
+            <View style={styles.sortingOptionsContainer}>
+              <TouchableOpacity
+                onPress={() => handleSortBy("Rating")}
+                style={[
+                  styles.sortingOption,
+                  sortBy === "Rating" && styles.selectedSortingOption,
+                ]}
+              >
+                <Text style={styles.sortingOptionText}>Sort By Rating</Text>
+                {sortBy === "Rating" && (
+                  <FontAwesome5
+                    name="check"
+                    style={styles.sortingOptionCheckIcon}
+                  />
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleSortBy("Price")}
+                style={[
+                  styles.sortingOption,
+                  sortBy === "Price" && styles.selectedSortingOption,
+                ]}
+              >
+                <Text style={styles.sortingOptionText}>
+                  Sort By Price: Low to High
+                </Text>
+                {sortBy === "Price" && (
+                  <FontAwesome5
+                    name="check"
+                    style={styles.sortingOptionCheckIcon}
+                  />
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleSortBy("Price-desc")}
+                style={[
+                  styles.sortingOption,
+                  sortBy === "Price-desc" && styles.selectedSortingOption,
+                ]}
+              >
+                <Text style={styles.sortingOptionText}>
+                  Sort By Price: High to Low
+                </Text>
+                {sortBy === "Price-desc" && (
+                  <FontAwesome5
+                    name="check"
+                    style={styles.sortingOptionCheckIcon}
+                  />
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+      {/* Render DescriptionModal if descriptionVisible is true */}
+      {selectedProduct && (
+        <DescriptionModal
+          visible={descriptionVisible}
+          onClose={() => setDescriptionVisible(false)}
+          productData={selectedProduct}
+        />
+      )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-    paddingVertical: 20,
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingBottom: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center", // Center the items horizontally
-  },
-  productName: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  iconButton: {
-    padding: 8,
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    paddingBottom: 20,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    width: "80%",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  filterOptionTitle: {
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  filterOption: {
-    paddingVertical: 5,
-  },
-});
 
 export default ProductListContainer;
