@@ -1,20 +1,33 @@
+import { imagesAtom } from "@/atoms";
 import { Ionicons } from "@expo/vector-icons";
-import { Camera, CameraType, FlashMode } from "expo-camera";
-import * as MediaLibrary from "expo-media-library";
 import { useNavigation } from "@react-navigation/native";
+import { Camera, CameraType, FlashMode } from "expo-camera";
+import { ImagePicker } from "expo-image-multiple-picker";
+import * as MediaLibrary from "expo-media-library";
+import { router } from "expo-router";
+import { useSetAtom } from "jotai";
 import React, { useEffect, useRef, useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView } from "react-native";
-import { ImagePicker } from 'expo-image-multiple-picker';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function CameraScreen() {
   const [showCamera, setShowCamera] = useState(false);
   const nav = useNavigation();
-  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState<
+    boolean | null
+  >(null);
   const [images, setImages] = useState<string[]>([]);
   const [type, setType] = useState(CameraType.back);
   const [flash, setFlash] = useState(FlashMode.off);
   const cameraRef = useRef<Camera>(null);
   const [showPicker, setShowPicker] = useState(false);
+  const setImagesAtom = useSetAtom(imagesAtom)
 
   useEffect(() => {
     const unsubscribeFocus = nav.addListener("focus", () => {
@@ -31,9 +44,13 @@ export default function CameraScreen() {
 
   useEffect(() => {
     (async () => {
-      const { status: cameraStatus } = await Camera.requestCameraPermissionsAsync();
-      const { status: mediaStatus } = await MediaLibrary.requestPermissionsAsync();
-      setHasCameraPermission(cameraStatus === 'granted' && mediaStatus === 'granted');
+      const { status: cameraStatus } =
+        await Camera.requestCameraPermissionsAsync();
+      const { status: mediaStatus } =
+        await MediaLibrary.requestPermissionsAsync();
+      setHasCameraPermission(
+        cameraStatus === "granted" && mediaStatus === "granted",
+      );
     })();
   }, []);
 
@@ -45,7 +62,7 @@ export default function CameraScreen() {
     if (cameraRef.current) {
       try {
         const data = await cameraRef.current.takePictureAsync();
-        setImages(prevImages => [...prevImages, data.uri]);
+        setImages((prevImages) => [...prevImages, data.uri]);
       } catch (e) {
         console.log(e);
       }
@@ -57,48 +74,82 @@ export default function CameraScreen() {
   };
 
   function toggleCameraType() {
-    setType(current => current === CameraType.back ? CameraType.front : CameraType.back);
+    setType((current) =>
+      current === CameraType.back ? CameraType.front : CameraType.back,
+    );
   }
 
   const toggleFlash = () => {
-    setFlash(flash => flash === FlashMode.off ? FlashMode.on : FlashMode.off);
+    setFlash((flash) =>
+      flash === FlashMode.off ? FlashMode.on : FlashMode.off,
+    );
   };
 
   function handlePress() {
-    setShowPicker(current => !current);
+    setShowPicker((current) => !current);
   }
 
-  const handleDone = () => {
-    console.log("Done button pressed");
+  const handleDone = async () => {
     console.log("Done with images:", images);
-  setImages([]);
-};
+    setImagesAtom([...images])
+    router.push("/photos")
+  };
 
-  const renderImageThumbnails = () => images.map((uri, index) => (
-    <View key={index} style={styles.thumbnailContainer}>
-      <Image source={{ uri }} style={styles.thumbnail} />
-      <TouchableOpacity style={styles.removeButton} onPress={() => removeImage(index)}>
-        <Text style={styles.removeButtonText}>X</Text>
-      </TouchableOpacity>
-    </View>
-  ));
+  const renderImageThumbnails = () =>
+    images.map((uri, index) => (
+      <View key={index} style={styles.thumbnailContainer}>
+        <Image source={{ uri }} style={styles.thumbnail} />
+        <TouchableOpacity
+          style={styles.removeButton}
+          onPress={() => removeImage(index)}
+        >
+          <Text style={styles.removeButtonText}>X</Text>
+        </TouchableOpacity>
+      </View>
+    ));
 
   return (
     <View style={styles.container}>
       {!showPicker && showCamera && (
         <>
-          <Camera style={styles.camera} type={type} flashMode={flash} ref={cameraRef}>
+          <Camera
+            style={styles.camera}
+            type={type}
+            flashMode={flash}
+            ref={cameraRef}
+          >
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.rightButtons} onPress={toggleCameraType}>
-                <Ionicons name="camera-reverse-outline" size={24} color="white" />
+              <TouchableOpacity
+                style={styles.rightButtons}
+                onPress={toggleCameraType}
+              >
+                <Ionicons
+                  name="camera-reverse-outline"
+                  size={24}
+                  color="white"
+                />
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.rightButtons} onPress={toggleFlash}>
-                <Ionicons name={flash === FlashMode.off ? "flash-off-outline" : "flash-outline"} size={24} color="white" />
+              <TouchableOpacity
+                style={styles.rightButtons}
+                onPress={toggleFlash}
+              >
+                <Ionicons
+                  name={
+                    flash === FlashMode.off
+                      ? "flash-off-outline"
+                      : "flash-outline"
+                  }
+                  size={24}
+                  color="white"
+                />
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity style={styles.galleryButton} onPress={handlePress}>
+            <TouchableOpacity
+              style={styles.galleryButton}
+              onPress={handlePress}
+            >
               <Ionicons name="images-outline" size={24} color="white" />
             </TouchableOpacity>
           </Camera>
@@ -114,7 +165,10 @@ export default function CameraScreen() {
           )}
 
           <View style={styles.cameraContainer}>
-            <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
+            <TouchableOpacity
+              style={styles.captureButton}
+              onPress={takePicture}
+            >
               <Ionicons name="camera-outline" size={50} color="white" />
             </TouchableOpacity>
           </View>
@@ -123,9 +177,50 @@ export default function CameraScreen() {
 
       {showPicker && (
         <ImagePicker
+          theme={{
+            header(props) {
+              return (
+                <View
+                  style={{
+                    padding: 10,
+                    height: 60,
+                    width: "100%",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() => setShowPicker(false)}
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Ionicons name="arrow-back" size={30} color="white" />
+                    <Text>Back</Text>
+                  </TouchableOpacity>
+
+                  <Text style={{ color: "white", fontSize: 20 }}>
+                    {props.imagesPicked}  selected
+                  </Text>
+
+                  <TouchableOpacity onPress={() => {
+                    if (props.imagesPicked > 0 && props.save) props.save()
+                  }}>
+                    <Text style={{
+                      color: props.imagesPicked > 0 ? "white" : "gray",
+                      fontSize: 16
+                    }}>Done</Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            },
+          }}
           onSave={(assets) => {
-            const uris = assets.map(asset => asset.uri);
-            setImages(prevImages => [...prevImages, ...uris]);
+            const uris = assets.map((asset) => asset.uri);
+            setImages((prevImages) => [...prevImages, ...uris]);
             setShowPicker(false);
           }}
           onCancel={() => setShowPicker(false)}
