@@ -57,7 +57,12 @@ def scrape_w_soup(page: BeautifulSoup, url: str) -> PossibleProduct:
 
 
 def _product_name(page: BeautifulSoup, url: str) -> Optional[str]:
-    pass
+    elm = page.select_one(".product-details__badge-title--wrapper")
+    if elm == None:
+        logging.warning(f"@{url} name not found")
+        return None
+    
+    return elm.get_text(strip=True) 
 
 def _price(page: BeautifulSoup, url: str) -> Optional[float]:
     price_elm = page.select_one(".price")
@@ -220,8 +225,8 @@ if __name__ == "__main__":
         "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=5005733221502780&mkt=en-US&setlang=en-US&w=2A5omBdRC2HkWA_VtzKFQ_qw2JnacdZ-",
         "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4781862347747130&mkt=en-US&setlang=en-US&w=G2FA3i7VXbt-ikALhDgdoEl4Myf7wFe8",
         "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4807520484735958&mkt=en-US&setlang=en-US&w=6XSEf6gGZQOKNVHxaZdRQ4wh1i9UFegz",
-        "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4532337629743198&mkt=en-US&setlang=en-US&w=8eHN8sZbMycNEb0Bd_H2lLdrlr2m5N-x",
-        "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4521368286142879&mkt=en-US&setlang=en-US&w=sQYoatQAIbQIFPBWigGHerUhlwBFaqQY",
+        #"http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4532337629743198&mkt=en-US&setlang=en-US&w=8eHN8sZbMycNEb0Bd_H2lLdrlr2m5N-x",
+        #"http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4521368286142879&mkt=en-US&setlang=en-US&w=sQYoatQAIbQIFPBWigGHerUhlwBFaqQY",
         # "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4910874574659251&mkt=en-US&setlang=en-US&w=tVg3vPZK6lW5NVHrUDQVJAiGAmh5kEuK",
         # "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4724700627083582&mkt=en-US&setlang=en-US&w=Ld4u2Xcuy-xki_tMMM9c5G3XnDA64dDD",
         # "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4860047931539940&mkt=en-US&setlang=en-US&w=VicDTqEThdOiGBs1Qp_L2R9bynK-G_uq",
