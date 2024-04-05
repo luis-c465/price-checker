@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   ScrollView,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   Image,
+  TouchableWithoutFeedback,
 } from "react-native";
 import styles from "./styles";
 import { ProductData } from "./ProductBox";
@@ -16,11 +17,23 @@ interface DescriptionModalProps {
   productData: ProductData;
 }
 
+const [selectedImage, setSelectedImage] = useState(null);
+
 const DescriptionModal: React.FC<DescriptionModalProps> = ({
   visible,
   onClose,
   productData,
 }) => {
+  const [showFullDescription, setShowFullDescription] = useState(false);
+
+  // Function to truncate description text to 140 characters
+  const truncateDescription = (description: string) => {
+    if (description.length > 140 && !showFullDescription) {
+      return description.slice(0, 140) + "...";
+    }
+    return description;
+  };
+
   return (
     <Modal
       animationType="slide"
@@ -28,44 +41,60 @@ const DescriptionModal: React.FC<DescriptionModalProps> = ({
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <TouchableOpacity onPress={onClose}>
-            <View style={styles.DescriptionModalCancelButton}></View>
-          </TouchableOpacity>
-          <Text style={styles.modalTitle}>Description</Text>
-          <ScrollView>
-            <View style={styles.categoryContainer}>
-              <Text style={styles.categoryTitle}>Photos:</Text>
-              <ScrollView horizontal={true}>
-                {productData.photos.map((photo, index) => (
-                  <Image
-                    key={index}
-                    source={{ uri: photo }}
-                    style={styles.productPhoto}
-                  />
-                ))}
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.modalContainer}>
+          <TouchableWithoutFeedback>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>Description</Text>
+              <ScrollView>
+                <View style={styles.categoryContainer}>
+                  <Text style={styles.categoryTitle}>Photos:</Text>
+                  <ScrollView horizontal={true}>
+                    {[
+                      ...productData.photos,
+                      "https://via.placeholder.com/100",
+                    ].map((photo, index) => (
+                      <TouchableOpacity key={index} onPress={() => {}}>
+                        <Image
+                          source={{ uri: photo }}
+                          style={styles.productPhoto}
+                        />
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+                <View style={styles.categoryContainer}>
+                  <Text style={styles.categoryTitle}>Description:</Text>
+                  <Text style={styles.textStyle}>
+                    {truncateDescription(productData.description)}
+                  </Text>
+                  {productData.description.length > 140 &&
+                    !showFullDescription && (
+                      <TouchableOpacity
+                        onPress={() => setShowFullDescription(true)}
+                      >
+                        <Text style={styles.showMoreButton}>Show More</Text>
+                      </TouchableOpacity>
+                    )}
+                  {showFullDescription && (
+                    <TouchableOpacity
+                      onPress={() => setShowFullDescription(false)}
+                    >
+                      <Text style={styles.showMoreButton}>Show Less</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+                <View style={styles.categoryContainer}>
+                  <Text style={styles.categoryTitle}>Last Updated:</Text>
+                  <Text style={styles.textStyle}>
+                    {productData.lastUpdatedAt}
+                  </Text>
+                </View>
               </ScrollView>
             </View>
-            <View style={styles.categoryContainer}>
-              <Text style={styles.categoryTitle}>Measurements:</Text>
-              <Text style={styles.textStyle}>{productData.measurements}</Text>
-            </View>
-            <View style={styles.categoryContainer}>
-              <Text style={styles.categoryTitle}>Description:</Text>
-              <Text style={styles.textStyle}>{productData.description}</Text>
-            </View>
-            <View style={styles.categoryContainer}>
-              <Text style={styles.categoryTitle}>Quantity:</Text>
-              <Text style={styles.textStyle}> {productData.quantity}</Text>
-            </View>
-            <View style={styles.categoryContainer}>
-              <Text style={styles.categoryTitle}>Last Updated:</Text>
-              <Text style={styles.textStyle}>{productData.lastUpdatedAt}</Text>
-            </View>
-          </ScrollView>
+          </TouchableWithoutFeedback>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };

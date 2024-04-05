@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   View,
   Linking,
+  Image,
+  TouchableWithoutFeedback,
 } from "react-native";
 import StarRating from "./StarRating";
 
@@ -40,38 +42,37 @@ const ProductBox: React.FC<ProductBoxProps> = ({
   isNew,
   onPressDescription,
   num_ratings,
+  photos,
   url,
 }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  // Calculate the number of empty stars (5 - rating)
-  const filledStars = Math.round(rating);
-  const emptyStars = 5 - filledStars;
   const handleRedirect = () => {
-    Linking.openURL(
-      "https://www.amazon.com/s?k=bass&i=stripbooks&ref=nb_sb_noss"
-    ).catch((err) => console.error("Failed to open URL: ", err));
+    Linking.openURL(url).catch((err) =>
+      console.error("Failed to open URL: ", err)
+    );
   };
+
   return (
     <View style={styles.productBox}>
       {isNew && (
-        <View style={styles.newLabel}>
-          <Text style={styles.newText}>New</Text>
-          <Text style={styles.newDot}>•</Text>
+        <View style={styles.bookmark}>
+          <Text style={styles.bookmarkText}>New</Text>
         </View>
       )}
+      <TouchableOpacity onPress={() => setSelectedImage(photos[0])}>
+        <View style={styles.imageContainer}>
+          {photos.length > 0 && (
+            <Image source={{ uri: photos[0] }} style={styles.image} />
+          )}
+        </View>
+      </TouchableOpacity>
       <View style={styles.content}>
-        <Text style={styles.whiteText}>
-          <Text style={styles.bold}>Buy now:</Text> ${price.toFixed(2)}
-        </Text>
-        <Text style={styles.whiteText}>
-          <Text style={styles.bold}>Shipping:</Text> ${shipping.toFixed(2)}
-        </Text>
-        <Text style={styles.whiteText}>
-          <Text style={styles.bold}>Seller/Brand:</Text> {seller}
-        </Text>
+        <Text style={styles.price}>${price.toFixed(2)}</Text>
+        <Text style={styles.shipping}>Shipping: ${shipping.toFixed(2)}</Text>
         <TouchableOpacity onPress={onPressDescription}>
-          <Text style={styles.description}>Description</Text>
+          <Text style={styles.description}>Show More...</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.starOverlay}>
@@ -103,6 +104,33 @@ const ProductBox: React.FC<ProductBoxProps> = ({
           </View>
         </View>
       </Modal>
+      {/* Popup window for image */}
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={!!selectedImage}
+        onRequestClose={() => setSelectedImage(null)}
+      >
+        <TouchableOpacity
+          style={styles.imagePopupBackground}
+          onPress={() => setSelectedImage(null)}
+          activeOpacity={1}
+        >
+          {selectedImage && (
+            <TouchableOpacity
+              style={styles.imagePopupContainer}
+              onPress={(e) => e.stopPropagation()}
+              activeOpacity={1}
+            >
+              <Image
+                source={{ uri: selectedImage }}
+                style={styles.imagePopup}
+              />
+            </TouchableOpacity>
+          )}
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 };
@@ -112,68 +140,57 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     marginBottom: 20,
-    backgroundColor: "#333333",
+    backgroundColor: "#f0f0f0", // Light gray background color
     flexDirection: "row",
-    justifyContent: "space-between", // Center items horizontally
-    overflow: "visible", // Allow content to overflow the container
-    width: "90%", // Set a fixed width for the product box
-    marginLeft: 30,
-    position: "relative", // Ensure relative positioning for absolute elements
-    alignSelf: "center", // Center the product boxes horizontally
-    marginTop: 20, // Add some top margin to create space below the header
+    overflow: "visible",
+    width: "90%",
+    position: "relative",
+    alignSelf: "center",
+    marginTop: 20,
+    minHeight: 150, // Set minimum height to accommodate content
+    justifyContent: "center", // Center content vertically
+    shadowColor: "#000", // Shadow color
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  imageContainer: {
+    marginRight: 10,
+    marginTop: 10,
+  },
+  image: {
+    width: 100,
+    height: 100,
+    resizeMode: "cover",
+    borderRadius: 10,
   },
   content: {
-    flex: 1, // Take remaining space
-    marginRight: 10, // Add margin to create space between content and stars
+    flex: 1,
+    justifyContent: "center", // Center content vertically
+  },
+  price: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#000000", // Black text color for light mode
+  },
+  shipping: {
+    fontSize: 12,
+    color: "#777777", // Slightly darker gray for shipping text
+    marginBottom: 15,
   },
   bold: {
     fontWeight: "bold",
   },
-  newLabel: {
-    position: "absolute",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-    top: -10,
-    left: -40,
-    backgroundColor: "red",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderTopRightRadius: 12,
-    borderBottomRightRadius: 12,
-    zIndex: 1,
-    transform: [{ rotate: "-45deg" }],
-  },
-  newText: {
-    color: "white",
-    fontSize: 13,
-    fontWeight: "900",
-  },
-  newDot: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "900",
-  },
-  whiteText: {
-    color: "white",
-  },
   starOverlay: {
     flexDirection: "row",
-    transform: [{ translateX: -30 }], // Ensure stars are aligned horizontally
-  },
-  star: {
-    color: "#ffd700",
-    fontSize: 20, // Set the font size of stars
-  },
-  starOutline: {
-    color: "#ffd700",
-    fontSize: 20, // Set the font size of stars
-    opacity: 0.3, // Set opacity to create outline effect
+    transform: [{ translateX: -30 }],
   },
   description: {
-    color: "cyan",
-    marginTop: 5,
+    color: "rgb(6, 84, 186)",
   },
   modalBackground: {
     flex: 1,
@@ -182,48 +199,100 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: "white",
+    backgroundColor: "#ffffff", // Light background color for modal content
     padding: 20,
     borderRadius: 10,
     width: "80%",
+    shadowColor: "#000", // Shadow color
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   modalDescription: {
     fontSize: 16,
     marginBottom: 10,
+    color: "#000000", // Black text color for modal description
   },
   closeButton: {
-    backgroundColor: "blue",
+    backgroundColor: "#2196f3", // Adjusted blue color for close button
     padding: 10,
     borderRadius: 5,
     alignSelf: "flex-end",
   },
   closeText: {
-    color: "white",
+    color: "#ffffff", // White text color for close text
   },
   ratingCounter: {
     position: "absolute",
     top: 5,
-    transform: [{ translateX: 103 }, { translateY: -10 }], // Move the counter to the right
+    transform: [{ translateX: 103 }, { translateY: -10 }],
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 10,
     paddingHorizontal: 5,
     paddingVertical: 2,
   },
   ratingCounterText: {
-    color: "#fff",
+    color: "#ffffff", // White text color for rating counter
     fontSize: 12,
   },
   redirectBox: {
     position: "absolute",
-    bottom: 10,
-    left: 10,
-    backgroundColor: "blue",
+    bottom: 30,
+    left: 35,
+    backgroundColor: "#2196f3", // Adjusted blue color for redirect box
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
   },
   redirectText: {
-    color: "#fff",
+    color: "#ffffff", // White text color for redirect text
+  },
+  imagePopupBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  imagePopupContainer: {
+    backgroundColor: "#ffffff", // Light background color for image popup container
+    borderRadius: 10,
+    padding: 20,
+    width: "80%",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000", // Shadow color
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  imagePopup: {
+    width: 300,
+    height: 300,
+    resizeMode: "contain",
+  },
+  bookmark: {
+    position: "absolute",
+    top: 10,
+    left: -20, // Adjusted left position to overlap the image
+    backgroundColor: "#ff0000", // Red color for bookmark
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 5,
+    transform: [{ rotate: "-45deg" }], // Rotate the bookmark diagonally
+    zIndex: 1, // Ensure the bookmark is above other elements
+  },
+  bookmarkText: {
+    color: "#ffffff", // White text color for bookmark
+    fontWeight: "bold",
+    zIndex: 1,
   },
 });
 

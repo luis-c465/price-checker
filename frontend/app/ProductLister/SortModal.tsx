@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Modal, Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import {
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 import styles from "./styles";
 
@@ -29,46 +36,56 @@ const SortModal: React.FC<SortModalProps> = ({
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <TouchableOpacity onPress={onClose}>
-            <View style={styles.sortModalCancelButton}></View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleSortOption("Rating")}>
-            <Text
-              style={
-                selectedOption === "Rating"
-                  ? styles.selectedOption
-                  : styles.sortOption
-              }
-            >
-              Sort By Rating
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleSortOption("Price")}>
-            <Text
-              style={
-                selectedOption === "Price-asc"
-                  ? styles.selectedOption
-                  : styles.sortOption
-              }
-            >
-              Sort By Price: Low to High
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleSortOption("Price-desc")}>
-            <Text
-              style={
-                selectedOption === "Price-desc"
-                  ? styles.selectedOption
-                  : styles.sortOption
-              }
-            >
-              Sort By Price: High to Low
-            </Text>
-          </TouchableOpacity>
+      <TouchableWithoutFeedback onPress={onClose}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TouchableOpacity onPress={() => handleSortOption("Rating")}>
+              <Text
+                style={
+                  selectedOption === "Rating"
+                    ? styles.selectedOption
+                    : styles.sortOption
+                }
+              >
+                Sort By Rating
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleSortOption("Price")}>
+              <Text
+                style={
+                  selectedOption === "Price-asc"
+                    ? styles.selectedOption
+                    : styles.sortOption
+                }
+              >
+                Sort By Price: Low to High
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleSortOption("Price-desc")}>
+              <Text
+                style={
+                  selectedOption === "Price-desc"
+                    ? styles.selectedOption
+                    : styles.sortOption
+                }
+              >
+                Sort By Price: High to Low
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleSortOption("Last Updated")}>
+              <Text
+                style={
+                  selectedOption === "Last Updated"
+                    ? styles.selectedOption
+                    : styles.sortOption
+                }
+              >
+                Sort By Last Updated
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };

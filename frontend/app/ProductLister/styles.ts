@@ -4,7 +4,7 @@ const styles = StyleSheet.create({
   // Global Styles
   container: {
     flex: 1,
-    backgroundColor: "#000", // Dark background
+    backgroundColor: "#fff", // Light background
     paddingVertical: 20,
   },
   header: {
@@ -16,6 +16,43 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  sortingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 20,
+    marginHorizontal: 10,
+  },
+  sortingOptionText: {
+    marginRight: 5,
+    fontWeight: "bold",
+  },
+  sortingModalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  sortingOptionsContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 20,
+    width: "80%",
+  },
+  sortingOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  selectedSortingOption: {
+    backgroundColor: "#007bff",
+    borderRadius: 5,
+  },
+  sortingOptionCheckIcon: {
+    color: "#fff",
+  },
   gradient: {
     flex: 1,
     borderRadius: 5, // Adjust as needed
@@ -23,7 +60,7 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#fff", // White text for dark mode
+    color: "#000", // Black text for light mode
   },
   scrollContainer: {
     flexGrow: 1,
@@ -36,7 +73,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "#333", // Darker modal for dark mode
+    backgroundColor: "#fff", // Lighter modal for light mode
     padding: 20,
     borderRadius: 10,
     width: "80%",
@@ -45,7 +82,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#fff", // White text for dark mode
+    color: "#000", // Black text for light mode
   },
   filterOptionTitle: {
     fontWeight: "bold",
@@ -62,7 +99,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: "grey",
+    backgroundColor: "#fff",
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
@@ -79,7 +116,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
     height: "80%", // adjust as needed
     width: "90%", // adjust as needed
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     borderRadius: 20,
     padding: 10,
     shadowColor: "#000",
@@ -89,7 +126,7 @@ const styles = StyleSheet.create({
     },
   },
   textStyle: {
-    color: "white",
+    color: "#000",
     textAlign: "center",
   },
   buttonContainer: {
@@ -111,7 +148,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   buttonText: {
-    color: "white",
+    color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -189,43 +226,10 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   applyButtonText: {
-    color: "white",
+    color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
     fontSize: 18,
-  },
-  filterModalCancelButton: {
-    left: 150,
-    bottom: 30,
-    backgroundColor: "#f44336",
-    borderRadius: 30,
-    padding: 10,
-    elevation: 2,
-    marginTop: 10,
-  },
-  sortModalCancelButton: {
-    left: 120,
-    bottom: 30,
-    backgroundColor: "#f44336",
-    borderRadius: 30,
-    padding: 10,
-    elevation: 2,
-    marginTop: 10,
-  },
-  DescriptionModalCancelButton: {
-    left: 260,
-    bottom: 20,
-    backgroundColor: "#f44336",
-    borderRadius: 30,
-    padding: 10,
-    elevation: 2,
-    marginTop: 10,
-    width: 20,
-  },
-  cancelButtonText: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center",
   },
   resetButton: {
     backgroundColor: "#FF6347",
@@ -234,25 +238,28 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   resetButtonText: {
-    color: "white",
+    color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
     fontSize: 18,
   },
   iconButtonContainer: {
-    flexDirection: "row",
+    position: "absolute",
+    top: 0,
+    right: 0,
+    flexDirection: "row", // Align buttons horizontally
+    alignItems: "center", // Align buttons to the right
   },
   iconButton: {
-    width: 40,
+    width: 100,
     height: 40,
-    borderRadius: 20, // To create a circle
+    left: 50,
     justifyContent: "center",
-    alignItems: "center",
-    marginLeft: 10, // Adjust margin for spacing
+    marginLeft: 10,
   },
   filterIcon: {
     fontSize: 20,
-    color: "white",
+    color: "#000", // Black icon for light mode
   },
   categoryContainer: {
     marginBottom: 20,
@@ -260,7 +267,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     fontWeight: "bold",
     marginBottom: 5,
-    color: "#fff", // White text for dark mode
+    color: "#000", // Black text for light mode
   },
   productContainer: {
     flexDirection: "row",
@@ -270,7 +277,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 10, // Rounded corners
     borderWidth: 1, // Add border
-    borderColor: "orange", // Orange border for modern look
+    borderColor: "#ccc", // Light gray border for modern look
   },
   productPhoto: {
     width: 200, // Longer product photos
@@ -278,6 +285,26 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderRadius: 10, // Rounded corners
     // Shadow removed for a cleaner look
+  },
+  photoDotsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  photoDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "gray",
+    marginHorizontal: 5,
+  },
+  selectedPhotoDot: {
+    backgroundColor: "grey",
+  },
+  showMoreButton: {
+    color: "blue", // Change color as desired
+    marginTop: 5,
   },
 });
 
