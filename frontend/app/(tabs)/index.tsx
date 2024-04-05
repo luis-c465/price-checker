@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { StyleSheet, TextInput } from 'react-native';
+import { Image, Keyboard, StyleSheet, TextInput, ScrollView, FlatList, TouchableWithoutFeedback } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
@@ -16,56 +16,116 @@ export default function HomeScreen() {
   };
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <SafeAreaView style={styles.container}>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={{...styles.searchBar, color: 'white'}}
-          placeholder="Search..."
-          placeholderTextColor="white"
-          onChangeText={text => setSearchText(text)}
-          onSubmitEditing={handleSearchSubmit}
-        />
-      </View>
-        <View style={styles.container}>
-        <Text style={styles.title}>Tab Two</Text>
-        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-        <EditScreenInfo path="app/(tabs)/two.tsx" />
-      </View>
+        <View style={styles.titleContainer}>
+        </View>
+          <View style={styles.searchContainer}>
+            <Image
+    style={{ width: 200, height: 100 }} // Adjust the dimensions as needed
+    source={require("../../assets/images/TradeHubLogoProj.png")} // Replace with the path to your image
+    />
+            <Text style={styles.textbody}>Enter a product or snap a picture to find the best price!</Text>
+            <TextInput
+              style={{...styles.searchBar, color: 'black', fontFamily: 'Helvetica', fontSize: 14, fontWeight: 'normal'}}
+              placeholder="Search..."
+              placeholderTextColor="gray"
+              onChangeText={text => setSearchText(text)}
+              onSubmitEditing={handleSearchSubmit}
+            />
+            <Text style={styles.titleText}></Text>
+          </View>
+          <View style={styles.creditsContainer}>
+            <Text style={styles.creditsText}>Developed by Luis Canada, Marcos Carillo, Jaime Diaz, Xavier Williams, Salvador Frias, Dwene Louis, and Enrique Dominguez</Text>
+          </View>
     </SafeAreaView>
+    </TouchableWithoutFeedback>
+    // <Text style={styles.titleText}> Trade Hub</Text>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 10,
-    alignItems: 'center',
+    backgroundColor: 'white',
+    borderColor: 'gray',
+    borderWidth: 0,
+    borderRadius: 6,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleContainer: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    borderColor: 'gray',
+    borderWidth: 0,
+    borderRadius: 6,
   },
   searchContainer: {
-    alignSelf: 'flex-start',
-    width: '100%',
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingLeft: 5,
-    paddingRight: 5,
-    paddingTop: 7,
+    alignSelf: 'center',
+    display: 'flex',
+    width: '100%',
+    paddingHorizontal: 25,
+    marginTop: 0,
+    backgroundColor: 'transparent',
+    borderColor: 'black',
+    borderWidth: 0,
   },
-  title: {
-    fontSize: 20,
+  titleText: {
+    flex: 1,
+    fontFamily: 'Futura',
     fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+    fontSize: 31,
+    textAlign: 'left',
+    color: 'black',
+    borderColor: 'black',
+    borderWidth: 0,
+    lineHeight: 35,
+    paddingTop: 0,
+    alignSelf: 'center',
   },
   searchBar: {
     height: 40,
     width: '100%',
+    alignSelf: 'center',
     borderColor: 'gray',
-    borderWidth: 1,
-    paddingLeft: 10,
-    marginBottom: 10,
-    borderRadius: 6,
+    borderWidth: 0,
+    paddingHorizontal: 10,
+    borderRadius: 25,
+    backgroundColor: '#E9E9E9',
   },
+  textbody: {
+    fontSize: 10,
+    alignSelf: 'center',
+    fontFamily: 'SpaceMono-Regular',
+    fontWeight: 'normal',
+    lineHeight: 17.5,
+    textAlign: 'center',
+    paddingHorizontal: 0,
+    paddingBottom: 0,
+    marginBottom: 0,
+    color: 'black',
+    borderColor: 'black',
+    borderWidth: 0,
+  },
+  creditsText: {
+    fontSize: 11,
+    lineHeight: 13,
+    textAlign: 'center',
+    color: 'gray',
+    backgroundColor: 'transparent',
+    borderColor: 'black',
+    borderWidth: 0,
+    paddingHorizontal: 15,
+  },
+  creditsContainer: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    justifyContent: 'flex-end',
+    marginBottom: 6,
+    alignSelf: 'stretch',
+  }
 });
