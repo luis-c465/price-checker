@@ -1,6 +1,7 @@
 import { imagesAtom } from "@/atoms";
 import ProductPhotoInfo from "@/components/ProductPhotoInfo";
 import { ImageSearch, getImageSearchResponse } from "@/server";
+import { router } from "expo-router";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 import {
@@ -18,11 +19,15 @@ export default function PhotoAnalyzer() {
   const [serverData, setServerData] = useState<ImageSearch[]>();
 
   useEffect(() => {
+    if (images.length == 0) return;
+
+    console.log(images);
     (async () => {
       setLoading(true);
       try {
         const response = await getImageSearchResponse(images);
-        setServerData(response.proudcts);
+        console.log(response)
+        setServerData(response.products);
       } catch (e) {
         console.error(`Error occurred when fetching data from server!`);
         console.error(e);
@@ -54,7 +59,11 @@ function BigLoadingState() {
 function Photos({ images }: { images: ImageSearch[] }) {
   const [manualSearch, setManualSearch] = useState("");
   function onSearch(query: string) {
-    console.log("did cool", query);
+    console.log("did cool query", query);
+    router.navigate({
+      pathname: "/products/[query]",
+      params: { query },
+    });
   }
 
   return (
@@ -96,6 +105,10 @@ function Photos({ images }: { images: ImageSearch[] }) {
         style={styles.photos}
         data={images}
         numColumns={2}
+        contentContainerStyle={{
+          display: "flex",
+          alignItems: "center"
+        }}
         renderItem={(d) => (
           <ProductPhotoInfo
             url={d.item.url}
@@ -127,8 +140,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     flexWrap: "wrap",
-    alignItems: 'center',
-    marginTop: 5
+    alignItems: "center",
+    marginTop: 5,
   },
   cantFindContainer: {
     display: "flex",

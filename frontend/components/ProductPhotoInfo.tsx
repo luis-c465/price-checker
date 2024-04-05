@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     minHeight: 200,
     margin: 5,
-    width: "48%",
+    width: "40%",
   },
 
   imageMaximizeBtn: {

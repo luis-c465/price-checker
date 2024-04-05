@@ -91,9 +91,8 @@ export default function CameraScreen() {
 
   const handleDone = async () => {
     console.log("Done with images:", images);
-    setImages([...images])
+    setImagesAtom([...images])
     router.push("/photos")
-    setImages([]);
   };
 
   const renderImageThumbnails = () =>
