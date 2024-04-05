@@ -6,7 +6,7 @@ from homedepot import scrape_w_soup
 from .util import Test
 
 
-class TestAmazon(Test):
+class TestHomeDepot(Test):
     def test_ratcheting_tap(self):
         url = "https://www.homedepot.com/p/GEARWRENCH-SAE-Metric-Ratcheting-Tap-and-Die-Set-114-Piece-82812/204619484"
         output = scrape_w_soup(self.get_page(url), url)
@@ -69,6 +69,28 @@ class TestAmazon(Test):
             "description": "Includes SAE and Metric Taps and DiesDie adapter works on hex shaped and round diesRatcheting T-handles only needs a 5° swing arcView More Details",
         }
         self.assertProductsEqual(output, should)
+
+def test_stainless_fridge(self):
+        url = "https://www.homedepot.com/p/Frigidaire-36-in-25-6-cu-ft-Side-by-Side-Refrigerator-in-Stainless-Steel-Standard-Depth-FRSS2623AS/320970662"
+        output = scrape_w_soup(self.get_page(url), url)
+        should: Product = {
+            "name": "36 in. 25.6 cu. ft. Side by Side Refrigerator in Stainless Steel, Standard Depth",
+            "price": 1048.00,
+            "shipping": -1,
+            "condition": Condition.NEW,
+            "photos": [
+                "https://images.thdstatic.com/productImages/0a4c11ea-df91-43c1-90b1-89b54770f933/svn/stainless-steel-frigidaire-side-by-side-refrigerators-frss2623as-64_1000.jpg",
+                       ],
+            "num_ratings": 8473,
+            "avg_rating": 4,
+            "seller_num_ratings": -1,
+            "seller_avg_ratings": -1,
+            "measurements": "",
+            "quantity": 1,
+            "description": "Three flexible shelves that are easily adjustable and removableEnjoy the largest ice bucket capacity at 11-lbBuilt in air filter that captures and keeps odors awayView More Details",
+        }
+        self.assertProductsEqual(output, should)
+    
 
 
 if __name__ == "__main__":
