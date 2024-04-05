@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
-const USE_BACKEND = true;
+const USE_BACKEND = false;
 
 const SERVER_URL = "http://10.110.231.163:5001";
 export type ImageSearch = {
