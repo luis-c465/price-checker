@@ -1,5 +1,3 @@
-from tempfile import SpooledTemporaryFile
-
 from dotenv import load_dotenv
 
 from util import longest_common_substring, serialize_product
@@ -9,7 +7,7 @@ from flask import Flask, jsonify, request
 
 from search import images_search_all, text_search_all
 
-DEBUG = True
+DEBUG = False
 
 app = Flask(__name__)
 
@@ -22,14 +20,14 @@ def search():
 
 	products = text_search_all(query)
 	products = [serialize_product(p) for p in products if p != None]
-	names = [name for p in serialize_product if (name := p.get("name", None)) != None]
+	names = [name for p in products if (name := p.get("name", None)) != None]
 	return jsonify({
 		# At least 30 percent of products must contain the string
 		"name": longest_common_substring(names, threshold=30),
 		"products": products
 	})
 
-@app.route("/images")
+@app.route("/images", methods=["POST"])
 def images():
 	# files = list(request.files.values())
 	# file = files[0]

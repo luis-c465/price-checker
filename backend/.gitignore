@@ -231,3 +231,4 @@ pyrightconfig.json
 tmp/
 !test/tmp/.gitkeep
 *.json
+*.log
