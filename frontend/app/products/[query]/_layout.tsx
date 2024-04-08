@@ -117,6 +117,12 @@ const ProductListContainer: React.FC = () => {
         return [...products].sort((a, b) => b.price - a.price);
       } else if (sortBy === "Rating") {
         return [...products].sort((a, b) => b.rating - a.rating);
+      } else if (sortBy === "LastUpdated") {
+        return [...products].sort(
+          (a, b) =>
+            new Date(b.lastUpdatedAt).getTime() -
+            new Date(a.lastUpdatedAt).getTime()
+        );
       } else {
         return products;
       }
@@ -220,6 +226,23 @@ const ProductListContainer: React.FC = () => {
                   Sort By Price: High to Low
                 </Text>
                 {sortBy === "Price-desc" && (
+                  <FontAwesome5
+                    name="check"
+                    style={styles.sortingOptionCheckIcon}
+                  />
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleSortBy("LastUpdated")}
+                style={[
+                  styles.sortingOption,
+                  sortBy === "LastUpdated" && styles.selectedSortingOption,
+                ]}
+              >
+                <Text style={styles.sortingOptionText}>
+                  Sort By Last Updated
+                </Text>
+                {sortBy === "LastUpdated" && (
                   <FontAwesome5
                     name="check"
                     style={styles.sortingOptionCheckIcon}

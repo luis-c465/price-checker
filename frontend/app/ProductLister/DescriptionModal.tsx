@@ -17,14 +17,13 @@ interface DescriptionModalProps {
   productData: ProductData;
 }
 
-const [selectedImage, setSelectedImage] = useState(null);
-
 const DescriptionModal: React.FC<DescriptionModalProps> = ({
   visible,
   onClose,
   productData,
 }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // Function to truncate description text to 140 characters
   const truncateDescription = (description: string) => {
@@ -32,6 +31,10 @@ const DescriptionModal: React.FC<DescriptionModalProps> = ({
       return description.slice(0, 140) + "...";
     }
     return description;
+  };
+
+  const handleImagePress = (photo: string) => {
+    setSelectedImage(photo);
   };
 
   return (
@@ -54,7 +57,10 @@ const DescriptionModal: React.FC<DescriptionModalProps> = ({
                       ...productData.photos,
                       "https://via.placeholder.com/100",
                     ].map((photo, index) => (
-                      <TouchableOpacity key={index} onPress={() => {}}>
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => handleImagePress(photo)}
+                      >
                         <Image
                           source={{ uri: photo }}
                           style={styles.productPhoto}
@@ -95,6 +101,24 @@ const DescriptionModal: React.FC<DescriptionModalProps> = ({
           </TouchableWithoutFeedback>
         </View>
       </TouchableWithoutFeedback>
+      {/* Modal for displaying the selected image */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={!!selectedImage}
+        onRequestClose={() => setSelectedImage(null)}
+      >
+        <TouchableWithoutFeedback onPress={() => setSelectedImage(null)}>
+          <View style={styles.imagePopupBackground}>
+            {selectedImage && (
+              <Image
+                source={{ uri: selectedImage }}
+                style={styles.imagePopup}
+              />
+            )}
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </Modal>
   );
 };

@@ -1,30 +1,33 @@
-import { FontAwesome5 } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
   Animated,
   Easing,
-  Modal,
   ScrollView,
-  Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
+  Text,
 } from "react-native";
-import { defaultProductsData } from ".//DefaultProduct";
-import DescriptionModal from ".//DescriptionModal";
-import FilterModal from ".//FilterModal";
-import ProductBox, { ProductData } from ".//ProductBox";
-import styles from ".//styles";
+import { defaultProductsData } from "./DefaultProduct";
+import DescriptionModal from "./DescriptionModal";
+import FilterModal from "./FilterModal";
+import ProductBox, { ProductData } from "./ProductBox";
+import SortModal from "./SortModal";
+import styles from "./styles";
+import { useRoute } from "@react-navigation/native"; // Import useRoute hook
+import { FontAwesome5 } from "@expo/vector-icons";
 
 const ProductListContainer: React.FC = () => {
+  const route = useRoute(); // Use useRoute hook to access route params
+  const searchText = (route.params as { search?: string })?.search;
   const [products, setProducts] = useState<ProductData[]>(defaultProductsData);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [sortBy, setSortBy] = useState<string | null>(null);
-  const [showSortingOptions, setShowSortingOptions] = useState(false);
+  const [showSortModal, setShowSortModal] = useState(false);
   const [selectedDescription, setSelectedDescription] = useState<string>("");
   const [selectedProduct, setSelectedProduct] = useState<ProductData | null>(
     null
   );
+
   const [descriptionVisible, setDescriptionVisible] = useState<boolean>(false);
 
   // Animated value for the gradient
@@ -67,9 +70,8 @@ const ProductListContainer: React.FC = () => {
     setDescriptionVisible(true);
   };
 
-  const handleSortBy = (option: string | null) => {
+  const applySort = (option: string | null) => {
     setSortBy(option);
-    setShowSortingOptions(false);
   };
 
   const applyFilters = (filters: any) => {
@@ -117,6 +119,14 @@ const ProductListContainer: React.FC = () => {
         return [...products].sort((a, b) => b.price - a.price);
       } else if (sortBy === "Rating") {
         return [...products].sort((a, b) => b.rating - a.rating);
+      } else if (sortBy === "LastUpdated") {
+        return [...products].sort((a, b) => {
+          // Convert lastUpdatedAt strings to Date objects for comparison
+          const dateA = new Date(a.lastUpdatedAt);
+          const dateB = new Date(b.lastUpdatedAt);
+          // Sort by descending order of last updated timestamp
+          return dateB.getTime() - dateA.getTime();
+        });
       } else {
         return products;
       }
@@ -138,7 +148,7 @@ const ProductListContainer: React.FC = () => {
         </Animated.Text>
         <TouchableOpacity
           style={[styles.iconButton, styles.sortingContainer]}
-          onPress={() => setShowSortingOptions(!showSortingOptions)}
+          onPress={() => setShowSortModal(true)}
         >
           <Text style={styles.sortingOptionText}>
             Sort By: {sortBy ? sortBy : "None"}
@@ -168,68 +178,11 @@ const ProductListContainer: React.FC = () => {
         onClose={() => setShowFilterModal(false)}
         applyFilters={applyFilters}
       />
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={showSortingOptions}
-        onRequestClose={() => setShowSortingOptions(false)}
-      >
-        <TouchableWithoutFeedback onPress={() => setShowSortingOptions(false)}>
-          <View style={styles.sortingModalContainer}>
-            <View style={styles.sortingOptionsContainer}>
-              <TouchableOpacity
-                onPress={() => handleSortBy("Rating")}
-                style={[
-                  styles.sortingOption,
-                  sortBy === "Rating" && styles.selectedSortingOption,
-                ]}
-              >
-                <Text style={styles.sortingOptionText}>Sort By Rating</Text>
-                {sortBy === "Rating" && (
-                  <FontAwesome5
-                    name="check"
-                    style={styles.sortingOptionCheckIcon}
-                  />
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => handleSortBy("Price")}
-                style={[
-                  styles.sortingOption,
-                  sortBy === "Price" && styles.selectedSortingOption,
-                ]}
-              >
-                <Text style={styles.sortingOptionText}>
-                  Sort By Price: Low to High
-                </Text>
-                {sortBy === "Price" && (
-                  <FontAwesome5
-                    name="check"
-                    style={styles.sortingOptionCheckIcon}
-                  />
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => handleSortBy("Price-desc")}
-                style={[
-                  styles.sortingOption,
-                  sortBy === "Price-desc" && styles.selectedSortingOption,
-                ]}
-              >
-                <Text style={styles.sortingOptionText}>
-                  Sort By Price: High to Low
-                </Text>
-                {sortBy === "Price-desc" && (
-                  <FontAwesome5
-                    name="check"
-                    style={styles.sortingOptionCheckIcon}
-                  />
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+      <SortModal
+        visible={showSortModal}
+        onClose={() => setShowSortModal(false)}
+        applySort={applySort}
+      />
       {/* Render DescriptionModal if descriptionVisible is true */}
       {selectedProduct && (
         <DescriptionModal
