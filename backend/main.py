@@ -20,7 +20,7 @@ def search():
 
 	products = text_search_all(query)
 	products = [serialize_product(p) for p in products if p != None]
-	names = [name for p in serialize_product if (name := p.get("name", None)) != None]
+	names = [name for p in products if (name := p.get("name", None)) != None]
 	return jsonify({
 		# At least 30 percent of products must contain the string
 		"name": longest_common_substring(names, threshold=30),

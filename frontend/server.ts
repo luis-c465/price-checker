@@ -73,7 +73,7 @@ export async function getImageSearchResponse(
 
 type ProductSearchResponse = {
   name: string;
-  proudcts: ProductData[];
+  products: ProductData[];
 };
 
 export async function getProductSearchResponse(
@@ -94,6 +94,6 @@ export async function getProductSearchResponse(
     const req = await ax.request<ProductSearchResponse>(config);
     return req.data;
   } else {
-    return { name: "misc", proudcts: defaultProductsData };
+    return { name: "misc", products: defaultProductsData };
   }
 }
