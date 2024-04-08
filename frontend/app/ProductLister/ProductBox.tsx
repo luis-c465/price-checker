@@ -134,7 +134,7 @@ const ProductBox: React.FC<ProductBoxProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   productBox: {
     borderRadius: 20,
     padding: 10,

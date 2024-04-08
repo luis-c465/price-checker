@@ -55,22 +55,22 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <PortalProvider>
-        <Stack>
-          <Stack.Screen
-            name="(tabs)"
-            options={{ headerShown: false, title: "Tabs" }}
-          />
-          <Stack.Screen
-            name="products/[query]"
-            options={{ headerShown: true, title: "Found Products" }}
-          />
-          <Stack.Screen
-            name="photos"
-            options={{ headerShown: true, title: "Photos" }}
-          />
-        </Stack>
-      </PortalProvider>
+        <PortalProvider>
+          <Stack>
+            <Stack.Screen
+              name="(tabs)"
+              options={{ headerShown: false, title: "Tabs" }}
+            />
+            <Stack.Screen
+              name="products/[query]"
+              options={{ headerShown: true, title: "Found Products" }}
+            />
+            <Stack.Screen
+              name="photos"
+              options={{ headerShown: true, title: "Photos" }}
+            />
+          </Stack>
+        </PortalProvider>
     </ThemeProvider>
   );
 }

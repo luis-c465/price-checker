@@ -1,7 +1,6 @@
 import { router } from 'expo-router';
-import { Image, Keyboard, StyleSheet, TextInput, ScrollView, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { Image, Keyboard, StyleSheet, TextInput, TouchableWithoutFeedback } from 'react-native';
 
-import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native';

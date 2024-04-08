@@ -1,5 +1,3 @@
-from tempfile import SpooledTemporaryFile
-
 from dotenv import load_dotenv
 
 from util import longest_common_substring, serialize_product
@@ -9,7 +7,7 @@ from flask import Flask, jsonify, request
 
 from search import images_search_all, text_search_all
 
-DEBUG = True
+DEBUG = False
 
 app = Flask(__name__)
 
@@ -29,7 +27,7 @@ def search():
 		"products": products
 	})
 
-@app.route("/images")
+@app.route("/images", methods=["POST"])
 def images():
 	# files = list(request.files.values())
 	# file = files[0]

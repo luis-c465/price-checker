@@ -20,13 +20,10 @@ export default function PhotoAnalyzer() {
 
   useEffect(() => {
     if (images.length == 0) return;
-
-    console.log(images);
     (async () => {
       setLoading(true);
       try {
         const response = await getImageSearchResponse(images);
-        console.log(response)
         setServerData(response.products);
       } catch (e) {
         console.error(`Error occurred when fetching data from server!`);
@@ -59,7 +56,6 @@ function BigLoadingState() {
 function Photos({ images }: { images: ImageSearch[] }) {
   const [manualSearch, setManualSearch] = useState("");
   function onSearch(query: string) {
-    console.log("did cool query", query);
     router.navigate({
       pathname: "/products/[query]",
       params: { query },
@@ -107,13 +103,13 @@ function Photos({ images }: { images: ImageSearch[] }) {
         numColumns={2}
         contentContainerStyle={{
           display: "flex",
-          alignItems: "center"
+          alignItems: "flex-start"
         }}
         renderItem={(d) => (
           <ProductPhotoInfo
             url={d.item.url}
             text={d.item.text}
-            onClick={() => onSearch(d.item.text)}
+            onClick={onSearch}
           />
         )}
         keyExtractor={(_, i) => `${i}`}
@@ -133,8 +129,8 @@ const styles = StyleSheet.create({
   photos: {
     display: "flex",
     gap: 20,
-    flexWrap: "wrap",
     flexDirection: "row",
+    flexWrap: "wrap",
   },
   photosContainer: {
     flex: 1,
