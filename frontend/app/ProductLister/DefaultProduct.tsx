@@ -12,7 +12,8 @@ export const defaultProductsData: ProductData[] = [
     shipping: 50,
     condition: true,
     seller: "Apple",
-    description: "A laptop",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consequat, mauris at sagittis pulvinar, velit tellus venenatis nisi, vitae rhoncus quam eros nec nulla. Vivamus euismod, nisl sit amet varius lobortis, turpis arcu congue diam, eget interdum ex odio eget nisi ",
     num_ratings: 100,
     rating: getRandomRating(),
     photos: ["https://via.placeholder.com/150"],
@@ -21,7 +22,7 @@ export const defaultProductsData: ProductData[] = [
     measurements: "16 in",
     quantity: 10,
     lastUpdatedAt: "2021-10-10",
-    url: "https://www.apple.com/macbook-pro-14/",
+    url: "https://www.alibaba.com/",
     isNew: true,
   },
   {
@@ -38,7 +39,7 @@ export const defaultProductsData: ProductData[] = [
     measurements: "6 in",
     quantity: 20,
     lastUpdatedAt: "2021-10-10",
-    url: "https://www.samsung.com/galaxy-s21/",
+    url: "https://www.amazon.com/",
     isNew: false,
   },
   {
@@ -55,7 +56,7 @@ export const defaultProductsData: ProductData[] = [
     measurements: "5 in",
     quantity: 30,
     lastUpdatedAt: "2021-10-10",
-    url: "https://www.amazon.com/echo-dot/",
+    url: "https://www.bestbuy.com/",
     isNew: true,
   },
   {
@@ -72,7 +73,7 @@ export const defaultProductsData: ProductData[] = [
     measurements: "17 in",
     quantity: 5,
     lastUpdatedAt: "2021-10-10",
-    url: "https://www.dell.com/alienware/",
+    url: "https://www.craigslist.org/",
     isNew: false,
   },
   {
@@ -89,7 +90,7 @@ export const defaultProductsData: ProductData[] = [
     measurements: "1.5 in",
     quantity: 15,
     lastUpdatedAt: "2021-10-10",
-    url: "https://www.google.com/pixel-watch/",
+    url: "https://www.ebay.com/",
     isNew: true,
   },
   {
@@ -106,8 +107,8 @@ export const defaultProductsData: ProductData[] = [
     measurements: "12 in",
     quantity: 25,
     lastUpdatedAt: "2021-10-10",
-    url: "https://www.microsoft.com/xbox-series-x/",
+    url: "https://www.etsy.com/",
     isNew: false,
   },
-  // ... other products
+  // Add the rest of the products here...
 ];
