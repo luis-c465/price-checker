@@ -18,14 +18,10 @@ export default function HomeScreen() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <SafeAreaView style={styles.container}>
-        <View style={styles.titleContainer}>
-        <View style={{ position: 'absolute', zIndex: 1, alignItems: 'center', justifyContent: 'center', left: -207}}>
-            
-            </View>
-        </View>
+      <View style={styles.titleContainer}></View>
           <View style={styles.searchContainer}>
           <Image
-            style={{ width: 400, height: 300, left: -7 }}
+            style={{ width: 550, height: 330, left: -7, }}
             source={require("../../assets/images/TradeHubLogoV3.png")}
             />
             <Text style={styles.textbody}>Enter a product or snap a picture to find the best price!</Text>
@@ -52,7 +48,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     borderColor: 'gray',
-    borderWidth: 1,
+    borderWidth: 0,
     borderRadius: 6,
     justifyContent: 'center',
     alignItems: 'center',
@@ -61,7 +57,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent',
     borderColor: 'gray',
-    borderWidth: 1,
+    borderWidth: 0,
     borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
@@ -77,7 +73,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
     backgroundColor: 'transparent',
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: 0,
   },
   titleText: {
     flex: 1,
@@ -87,7 +83,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     color: 'black',
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: 0,
     lineHeight: 35,
     paddingTop: 0,
     alignSelf: 'center',
@@ -97,7 +93,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
     borderColor: 'gray',
-    borderWidth: 1,
+    borderWidth: 0,
     paddingHorizontal: 10,
     borderRadius: 25,
     backgroundColor: '#E9E9E9',
@@ -114,7 +110,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     color: 'black',
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: 0,
   },
   creditsText: {
     fontSize: 11,
@@ -123,7 +119,7 @@ const styles = StyleSheet.create({
     color: 'gray',
     backgroundColor: 'transparent',
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: 0,
     paddingHorizontal: 15,
   },
   creditsContainer: {
