@@ -11,19 +11,20 @@ export default function HomeScreen() {
 
   const handleSearchSubmit = () => {
     console.log(searchText);
-    // router.navigate({pathname: "/photos"})
     router.navigate({pathname: "/products/[query]", params: {query: searchText}})
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <SafeAreaView style={styles.container}>
+    <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+    <Image
+      style={{ width: 550, height: 330, left: -13}}
+      source={require("../../assets/images/TradeHubLogoV3.png")}
+    />
+  </View>
       <View style={styles.titleContainer}></View>
           <View style={styles.searchContainer}>
-          <Image
-            style={{ width: 550, height: 330, left: -7, }}
-            source={require("../../assets/images/TradeHubLogoV3.png")}
-            />
             <Text style={styles.textbody}>Enter a product or snap a picture to find the best price!</Text>
             <TextInput
               style={{...styles.searchBar, color: 'black', fontFamily: 'Helvetica', fontSize: 14, fontWeight: 'normal'}}
@@ -39,7 +40,6 @@ export default function HomeScreen() {
           </View>
     </SafeAreaView>
     </TouchableWithoutFeedback>
-    // <Text style={styles.titleText}> Trade Hub</Text>
   );
 }
 
