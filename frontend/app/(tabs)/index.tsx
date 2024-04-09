@@ -17,7 +17,7 @@ export default function HomeScreen() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <SafeAreaView style={styles.container}>
-    <View style={{ flex: 1, justifyContent: 'flex-start' }}>
+    <View style={{ flex: 1, justifyContent: 'flex-start', backgroundColor: 'transparent' }}>
     <Image
       style={{ width: 550, height: 330, left: -13}}
       source={require("../../assets/images/TradeHubLogoV3.png")}
