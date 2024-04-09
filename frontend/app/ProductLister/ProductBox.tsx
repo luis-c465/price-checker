@@ -11,26 +11,6 @@ import {
 } from "react-native";
 import StarRating from "./StarRating";
 
-interface LogoImages {
-  [key: string]: any;
-}
-
-const logoImages: LogoImages = {
-  "alibaba.com": require("../../assets/images/logos/Alibaba_logo.svg"),
-  "amazon.com": require("../../assets/images/logos/Amazon_logo.svg"),
-  "bestbuy.com": require("../../assets/images/logos/Best_Buy_Logo.svg"),
-  "craigslist.org": require("../../assets/images/logos/Craigslist.svg"),
-  "ebay.com": require("../../assets/images/logos/EBay_logo.svg"),
-  "etsy.com": require("../../assets/images/logos/Etsy_logo.svg"),
-  "ikea.com": require("../../assets/images/logos/Ikea_logo.svg"),
-  "mercari.com": require("../../assets/images/logos/Mercari_logo_2018.svg"),
-  "reverb.com": require("../../assets/images/logos/Reverb_logo.svg"),
-  "homedepot.com": require("../../assets/images/logos/TheHomeDepot.svg"),
-  "walmart.com": require("../../assets/images/logos/Walmart_logo.svg"),
-  "offerup.com": require("../../assets/images/logos/OfferUp_Logo.svg"),
-  "wayfair.com": require("../../assets/images/logos/Wayfair_logo.svg"),
-};
-
 export interface ProductData {
   price: number;
   shipping: number;
@@ -74,12 +54,6 @@ const ProductBox: React.FC<ProductBoxProps> = ({
     );
   };
 
-  const domain = url
-    .replace("https://", "")
-    .replace("http://", "")
-    .split("/")[0];
-  const LogoImage = logoImages[domain] || null;
-
   return (
     <View style={styles.productBox}>
       {isNew && (
@@ -103,13 +77,17 @@ const ProductBox: React.FC<ProductBoxProps> = ({
       </View>
       <View style={styles.starOverlay}>
         <StarRating rating={rating} />
+        {/* Redirect button */}
         <TouchableOpacity onPress={handleRedirect}>
-          {LogoImage && <Image source={LogoImage} resizeMode="contain" />}
+          <View style={styles.redirectBox}>
+            <Text style={styles.bold}>Redirect</Text>
+          </View>
         </TouchableOpacity>
         <View style={styles.ratingCounter}>
           <Text style={styles.ratingCounterText}>{num_ratings}</Text>
         </View>
       </View>
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -263,11 +241,12 @@ const styles = StyleSheet.create({
   },
   redirectBox: {
     position: "absolute",
-    bottom: 30,
-    left: 35,
-    paddingHorizontal: 5,
+    bottom: 20,
+    right: -20, // Adjusted right position to move the button to the bottom right corner
+    paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,
+    backgroundColor: "#2196f3", // Adjusted background color for the redirect button
   },
   redirectLogo: {
     width: 50, // Set the width of the logo
