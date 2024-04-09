@@ -51,5 +51,7 @@ class Product(TypedDict):
     name: str
     "The name of the product listing"
 
+    logo: str
+
 
 PossibleProduct = Optional[Product]
