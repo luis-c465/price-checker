@@ -53,52 +53,62 @@ class ConstantSiteData(TypedDict):
     url: str
     scraper: Scrapper
     allowedFreshness: Literal["month"] | Literal["week"] | Literal["day"] | None
+    logo: str
 
 
 SITE_SPECIFIER_TO_DATA: dict[str, ConstantSiteData] = {
     "ebay": {
+        "logo": "ebay",
         "url": "www.ebay.com/itm",
         "scraper": ebay.scrape_w_soup,
         "allowedFreshness": "month",
     },
-    "offerup": {"url": "offerup.com", "scraper": None, "allowedFreshness": None},
-    "wayfair": {"url": "www.wayfair.com", "scraper": None, "allowedFreshness": None},
+    # "offerup": {
+    #     "logo": "offerup",
+    #     "url": "offerup.com", "scraper": None, "allowedFreshness": None},
+    # "wayfair": {"url": "www.wayfair.com", "scraper": None, "allowedFreshness": None},
     "amazon": {
+        "logo": "amazon",
         "url": "www.amazon.com",
         "scraper": amazon.scrape_w_soup,
         "allowedFreshness": None,
     },
-    "alibaba": {
-        "url": "www.alibaba.com/product-detail",
-        "scraper": None,
-        "allowedFreshness": None,
-    },
+    # "alibaba": {
+    #     "url": "www.alibaba.com/product-detail",
+    #     "scraper": None,
+    #     "allowedFreshness": None,
+    # },
     "facebook": {
+        "logo": "facebook marketplace",
         "url": "www.facebook.com/marketplace",
         "scraper": None,
         "allowedFreshness": None,
     },
-    "etsy": {"url": "www.etsy.com/listing", "scraper": None, "allowedFreshness": None},
-    "craigslist": {
-        "url": "miami.craigslist.org",
-        "scraper": None,
-        "allowedFreshness": None,
-    },
-    "mercari": {
-        "url": "www.mercari.com/us/item",
-        "scraper": None,
-        "allowedFreshness": None,
-    },
-    "temu": {"url": "www.temu.com", "scraper": None, "allowedFreshness": None},
-    "walmart": {"url": "www.walmart.com/ip", "scraper": None, "allowedFreshness": None},
-    "bestbuy": {
-        "url": "www.bestbuy.com/site",
-        "scraper": None,
-        "allowedFreshness": None,
-    },
-    "reverb": {"url": "reverb.com/item", "scraper": None, "allowedFreshness": None},
-    "ikea": {"url": "www.ikea.com", "scraper": None, "allowedFreshness": None},
-    "depot": {"url": "www.homedepot.com/p", "scraper": None, "allowedFreshness": None},
+    # "etsy": {"url": "www.etsy.com/listing", "scraper": None, "allowedFreshness": None},
+    # "craigslist": {
+    #     "url": "miami.craigslist.org",
+    #     "scraper": None,
+    #     "allowedFreshness": None,
+    # },
+    # "mercari": {
+    #     "url": "www.mercari.com/us/item",
+    #     "scraper": None,
+    #     "allowedFreshness": None,
+    # },
+    # "temu": {"url": "www.temu.com", "scraper": None, "allowedFreshness": None},
+    "walmart": {
+        "logo": "walmart",
+        "url": "www.walmart.com/ip", "scraper": None, "allowedFreshness": None},
+    # "bestbuy": {
+    #     "url": "www.bestbuy.com/site",
+    #     "scraper": None,
+    #     "allowedFreshness": None,
+    # },
+    # "reverb": {"url": "reverb.com/item", "scraper": None, "allowedFreshness": None},
+    # "ikea": {"url": "www.ikea.com", "scraper": None, "allowedFreshness": None},
+    "depot": {
+        "logo": "homedepot",
+        "url": "www.homedepot.com/p", "scraper": None, "allowedFreshness": None},
 }
 
 
@@ -193,10 +203,13 @@ def search_and_scrape(site_data: ConstantSiteData, query: str) -> list[Product]:
         product = site_data["scraper"](BeautifulSoup(req.text, "lxml"), cached_url)
         product["lastUpdatedAt"] = lastUpdated
         product["url"] = url
+        product["logo"] = site_data["logo"]
         return product
 
     with ThreadPoolExecutor(max_workers=THREAD_POOL) as executor:
-        return [product for product in executor.map(_scrape, urls_to_scrape)]
+        return [product
+                for product in executor.map(_scrape, urls_to_scrape)
+                    if product != None]
 
 
 def images_search_all(files: list[FileStorage]) -> list[ImageProductSearch]:

@@ -6,8 +6,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Button,
+  View
 } from "react-native";
 import StarRating from "./StarRating";
 
@@ -47,6 +46,7 @@ export interface ProductData {
   quantity: number;
   lastUpdatedAt: string;
   url: string;
+  logo: "ebay" | "amazon" | "facebook marketplace" | "homedepot" | "walmart"
 }
 
 interface ProductBoxProps extends ProductData {
