@@ -22,8 +22,8 @@ export default function HomeScreen() {
         </View>
           <View style={styles.searchContainer}>
             <Image
-    style={{ width: 200, height: 100 }} // Adjust the dimensions as needed
-    source={require("../../assets/images/TradeHubLogov2.png")} // Replace with the path to your image
+    style={{ width: 200, height: 100 }}
+    source={require("../../assets/images/TradeHubLogoV3.png")}
     />
             <Text style={styles.textbody}>Enter a product or snap a picture to find the best price!</Text>
             <TextInput
