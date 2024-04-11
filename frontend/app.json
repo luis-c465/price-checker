@@ -38,6 +38,12 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": ["./assets/fonts/SpaceMono-Regular.ttf", "./assets/fonts/Futura.ttc"]
+        }
       ]
     ],
     "experiments": {
