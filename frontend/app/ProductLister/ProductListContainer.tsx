@@ -1,20 +1,20 @@
+import { defaultProductsData } from "@/default";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native"; // Import useRoute hook
 import React, { useEffect, useState } from "react";
 import {
   Animated,
   Easing,
   ScrollView,
+  Text,
   TouchableOpacity,
   View,
-  Text,
 } from "react-native";
-import { defaultProductsData } from "./DefaultProduct";
 import DescriptionModal from "./DescriptionModal";
 import FilterModal from "./FilterModal";
 import ProductBox, { ProductData } from "./ProductBox";
 import SortModal from "./SortModal";
 import styles from "./styles";
-import { useRoute } from "@react-navigation/native"; // Import useRoute hook
-import { FontAwesome5 } from "@expo/vector-icons";
 
 const ProductListContainer: React.FC = () => {
   const route = useRoute(); // Use useRoute hook to access route params
