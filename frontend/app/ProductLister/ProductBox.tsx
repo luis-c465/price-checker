@@ -10,24 +10,21 @@ import {
 } from "react-native";
 import StarRating from "./StarRating";
 
-interface LogoImages {
-  [key: string]: any;
-}
-
-const logoImages: LogoImages = {
-  "alibaba.com": require("../../assets/images/logos/Alibaba_logo.svg"),
-  "amazon.com": require("../../assets/images/logos/Amazon_logo.svg"),
-  "bestbuy.com": require("../../assets/images/logos/Best_Buy_Logo.svg"),
-  "craigslist.org": require("../../assets/images/logos/Craigslist.svg"),
-  "ebay.com": require("../../assets/images/logos/EBay_logo.svg"),
-  "etsy.com": require("../../assets/images/logos/Etsy_logo.svg"),
-  "ikea.com": require("../../assets/images/logos/Ikea_logo.svg"),
-  "mercari.com": require("../../assets/images/logos/Mercari_logo_2018.svg"),
-  "reverb.com": require("../../assets/images/logos/Reverb_logo.svg"),
-  "homedepot.com": require("../../assets/images/logos/TheHomeDepot.svg"),
-  "walmart.com": require("../../assets/images/logos/Walmart_logo.svg"),
-  "offerup.com": require("../../assets/images/logos/OfferUp_Logo.svg"),
-  "wayfair.com": require("../../assets/images/logos/Wayfair_logo.svg"),
+type LogoKey = "ebay" | "amazon" | "homedepot" | "walmart" | "alibaba" | "bestbuy" | "craigslist" | "etsy" | "ikea" | "mercari" | "reverb" | "offerup" | "wayfair"
+const logoImages: Record<LogoKey, any> = {
+  "alibaba": require("../../assets/images/logos/Alibaba_logo.svg"),
+  "amazon": require("../../assets/images/logos/Amazon_logo.svg"),
+  "bestbuy": require("../../assets/images/logos/Best_Buy_Logo.svg"),
+  "craigslist": require("../../assets/images/logos/Craigslist.svg"),
+  "ebay": require("../../assets/images/logos/EBay_logo.svg"),
+  "etsy": require("../../assets/images/logos/Etsy_logo.svg"),
+  "ikea": require("../../assets/images/logos/Ikea_logo.svg"),
+  "mercari": require("../../assets/images/logos/Mercari_logo_2018.svg"),
+  "reverb": require("../../assets/images/logos/Reverb_logo.svg"),
+  "homedepot": require("../../assets/images/logos/TheHomeDepot.svg"),
+  "walmart": require("../../assets/images/logos/Walmart_logo.svg"),
+  "offerup": require("../../assets/images/logos/OfferUp_Logo.svg"),
+  "wayfair": require("../../assets/images/logos/Wayfair_logo.svg"),
 };
 
 export interface ProductData {
@@ -46,7 +43,7 @@ export interface ProductData {
   quantity: number;
   lastUpdatedAt: string;
   url: string;
-  logo: "ebay" | "amazon" | "facebook marketplace" | "homedepot" | "walmart"
+  logo: LogoKey
 }
 
 interface ProductBoxProps extends ProductData {
@@ -64,6 +61,7 @@ const ProductBox: React.FC<ProductBoxProps> = ({
   num_ratings,
   photos,
   url,
+  logo
 }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -74,11 +72,7 @@ const ProductBox: React.FC<ProductBoxProps> = ({
     );
   };
 
-  const domain = url
-    .replace("https://", "")
-    .replace("http://", "")
-    .split("/")[0];
-  const LogoImage = logoImages[domain] || null;
+  const LogoImage = logoImages[logo] || null;
 
   return (
     <View style={styles.productBox}>

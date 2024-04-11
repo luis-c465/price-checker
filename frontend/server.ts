@@ -1,10 +1,9 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { defaultProductsData } from "./app/ProductLister/DefaultProduct";
 import { ProductData } from "./app/ProductLister/ProductBox";
-import { bottlesImageSearchResponse } from "./default";
+import { bottlesImageSearchResponse, defaultProductsData } from "./default";
 
-const USE_BACKEND = true;
-const SERVER_URL = "http://10.110.248.80:5001";
+const USE_BACKEND = false;
+const SERVER_URL = "http://10.110.229.147:5001";
 export type ImageSearch = {
   text: string;
   url: string;
