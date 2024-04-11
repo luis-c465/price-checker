@@ -168,7 +168,7 @@ def _seller_avg_ratings(page: BeautifulSoup, url:str) -> Optional[int]:
 
     rating_part = splits[0]
     try:
-        return round(float(rating_part), ndigits=None)
+        return int(float(rating_part) / 20)
     except ValueError:
         logging.warning(f"@{url} avg seller ratings '{rating_part}' is not an int")
         return None

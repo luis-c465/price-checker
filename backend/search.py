@@ -13,6 +13,8 @@ from werkzeug.datastructures.file_storage import FileStorage
 
 import amazon
 import ebay
+import homedepot
+import walmart
 from _types import Product
 
 SERP_API_KEYS = {
@@ -78,12 +80,12 @@ SITE_SPECIFIER_TO_DATA: dict[str, ConstantSiteData] = {
     #     "scraper": None,
     #     "allowedFreshness": None,
     # },
-    "facebook": {
-        "logo": "facebook marketplace",
-        "url": "www.facebook.com/marketplace",
-        "scraper": None,
-        "allowedFreshness": None,
-    },
+    # "facebook": {
+    #     "logo": "facebook marketplace",
+    #     "url": "www.facebook.com/marketplace",
+    #     "scraper": None,
+    #     "allowedFreshness": None,
+    # },
     # "etsy": {"url": "www.etsy.com/listing", "scraper": None, "allowedFreshness": None},
     # "craigslist": {
     #     "url": "miami.craigslist.org",
@@ -98,7 +100,7 @@ SITE_SPECIFIER_TO_DATA: dict[str, ConstantSiteData] = {
     # "temu": {"url": "www.temu.com", "scraper": None, "allowedFreshness": None},
     "walmart": {
         "logo": "walmart",
-        "url": "www.walmart.com/ip", "scraper": None, "allowedFreshness": None},
+        "url": "www.walmart.com/ip", "scraper": walmart.scrape_w_soup, "allowedFreshness": None},
     # "bestbuy": {
     #     "url": "www.bestbuy.com/site",
     #     "scraper": None,
@@ -108,7 +110,7 @@ SITE_SPECIFIER_TO_DATA: dict[str, ConstantSiteData] = {
     # "ikea": {"url": "www.ikea.com", "scraper": None, "allowedFreshness": None},
     "depot": {
         "logo": "homedepot",
-        "url": "www.homedepot.com/p", "scraper": None, "allowedFreshness": None},
+        "url": "www.homedepot.com/p", "scraper": homedepot.scrape_w_soup, "allowedFreshness": None},
 }
 
 
@@ -196,7 +198,7 @@ def search_and_scrape(site_data: ConstantSiteData, query: str) -> list[Product]:
 
     def _scrape(siteSearch: SiteSearch) -> Optional[Product]:
         cached_url, url, lastUpdated = siteSearch
-        req = session.get(url)
+        req = session.get(cached_url)
         if 400 <= req.status_code < 600:
             # The request it not ok
             return None
@@ -204,7 +206,15 @@ def search_and_scrape(site_data: ConstantSiteData, query: str) -> list[Product]:
         product["lastUpdatedAt"] = lastUpdated
         product["url"] = url
         product["logo"] = site_data["logo"]
-        return product
+
+        if product["price"] == -1:
+            return None
+
+        for word in query.split(" "):
+            txt = word.lower()
+            if txt in product["name"] or txt in product["description"]:
+                return product
+        return None
 
     with ThreadPoolExecutor(max_workers=THREAD_POOL) as executor:
         return [product
