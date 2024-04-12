@@ -1,13 +1,14 @@
+import json
 import logging
 from asyncio import Condition
-from typing import Optional
 from pprint import pprint
+from typing import Optional
 
 import requests
 from bs4 import BeautifulSoup
 
 from _types import Condition, PossibleProduct
-from util import make_product_dict
+from util import make_product_dict, serialize_product
 
 
 def scrape(url: str) -> PossibleProduct:
@@ -61,8 +62,8 @@ def _product_name(page: BeautifulSoup, url: str) -> Optional[str]:
     if elm == None:
         logging.warning(f"@{url} name not found")
         return None
-    
-    return elm.get_text(strip=True) 
+
+    return elm.get_text(strip=True)
 
 def _price(page: BeautifulSoup, url: str) -> Optional[float]:
     price_elm = page.select_one(".price")
@@ -212,7 +213,7 @@ def _description(page: BeautifulSoup, url: str) -> Optional[str]:
         return None
 
     ##txt = elm.get("content", None)
-    txt = elm.get_text(strip=True)  
+    txt = elm.get_text(strip=True)
     if not txt or len(txt) == 0:
         logging.warning(f"@{url} description is empty")
         return None
@@ -223,8 +224,8 @@ def _description(page: BeautifulSoup, url: str) -> Optional[str]:
 if __name__ == "__main__":
     urls = [
         "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=5005733221502780&mkt=en-US&setlang=en-US&w=2A5omBdRC2HkWA_VtzKFQ_qw2JnacdZ-",
-        "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4781862347747130&mkt=en-US&setlang=en-US&w=G2FA3i7VXbt-ikALhDgdoEl4Myf7wFe8",
-        "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4807520484735958&mkt=en-US&setlang=en-US&w=6XSEf6gGZQOKNVHxaZdRQ4wh1i9UFegz",
+        # "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4781862347747130&mkt=en-US&setlang=en-US&w=G2FA3i7VXbt-ikALhDgdoEl4Myf7wFe8",
+        # "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4807520484735958&mkt=en-US&setlang=en-US&w=6XSEf6gGZQOKNVHxaZdRQ4wh1i9UFegz",
         #"http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4532337629743198&mkt=en-US&setlang=en-US&w=8eHN8sZbMycNEb0Bd_H2lLdrlr2m5N-x",
         #"http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4521368286142879&mkt=en-US&setlang=en-US&w=sQYoatQAIbQIFPBWigGHerUhlwBFaqQY",
         # "http://cc.bingj.com/cache.aspx?q=site%3awww.homedepot.com%2fp+tap+and+die+set&d=4910874574659251&mkt=en-US&setlang=en-US&w=tVg3vPZK6lW5NVHrUDQVJAiGAmh5kEuK",
@@ -249,4 +250,6 @@ if __name__ == "__main__":
 
     for data in urls:
         output = scrape(data)
+        with open("scrape.json", "w") as f:
+            f.write(json.dumps(serialize_product(output)))
         pprint(output)

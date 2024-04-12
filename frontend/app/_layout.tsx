@@ -13,6 +13,7 @@ import "react-native-gesture-handler";
 
 import { useColorScheme } from "@/components/useColorScheme";
 
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary
@@ -28,7 +29,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    "SpaceMono-Regular": require("../assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
   });
 
@@ -55,22 +56,22 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <PortalProvider>
-        <Stack>
-          <Stack.Screen
-            name="(tabs)"
-            options={{ headerShown: false, title: "Tabs" }}
-          />
-          <Stack.Screen
-            name="products/[query]"
-            options={{ headerShown: true, title: "Found Products" }}
-          />
-          <Stack.Screen
-            name="photos"
-            options={{ headerShown: true, title: "Photos" }}
-          />
-        </Stack>
-      </PortalProvider>
+        <PortalProvider>
+          <Stack>
+            <Stack.Screen
+              name="(tabs)"
+              options={{ headerShown: false, title: "Tabs" }}
+            />
+            <Stack.Screen
+              name="products/[query]"
+              options={{ headerShown: true, title: "Found Products" }}
+            />
+            <Stack.Screen
+              name="photos"
+              options={{ headerShown: true, title: "Photos" }}
+            />
+          </Stack>
+        </PortalProvider>
     </ThemeProvider>
   );
 }

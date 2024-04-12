@@ -1,19 +1,32 @@
 import datetime
-import io
-import json
 import logging
 import os
-from cgi import FieldStorage
 from concurrent.futures import ThreadPoolExecutor
+from random import randint
 from typing import Callable, Literal, NamedTuple, Optional, TypedDict
 
 import requests
 from bs4 import BeautifulSoup
+from pyuploadcare import Uploadcare
+from serpapi import GoogleSearch
 from werkzeug.datastructures.file_storage import FileStorage
 
 import amazon
 import ebay
+import homedepot
+import walmart
 from _types import Product
+
+SERP_API_KEYS = {
+    key: True
+    for i in range(1, 10)
+        if (key := os.environ.get(f"SERP_API_{i}")) != None
+}
+
+UPLOAD_CARE_PUBLIC_KEY = os.environ.get("UPLOAD_CARE_PUBLIC_KEY")
+assert UPLOAD_CARE_PUBLIC_KEY != None, "Upload care public key not found!"
+
+uploadcare = Uploadcare(public_key=UPLOAD_CARE_PUBLIC_KEY, secret_key="YOUR_SECRET_KEY")
 
 THREAD_POOL = 16
 session = requests.Session()
@@ -34,7 +47,7 @@ Scrapper = Callable[[BeautifulSoup, str], "Product"]
 
 
 class ImageProductSearch(TypedDict):
-    name: str
+    text: str
     url: str
 
 
@@ -42,52 +55,62 @@ class ConstantSiteData(TypedDict):
     url: str
     scraper: Scrapper
     allowedFreshness: Literal["month"] | Literal["week"] | Literal["day"] | None
+    logo: str
 
 
 SITE_SPECIFIER_TO_DATA: dict[str, ConstantSiteData] = {
     "ebay": {
+        "logo": "ebay",
         "url": "www.ebay.com/itm",
         "scraper": ebay.scrape_w_soup,
         "allowedFreshness": "month",
     },
-    "offerup": {"url": "offerup.com", "scraper": None, "allowedFreshness": None},
-    "wayfair": {"url": "www.wayfair.com", "scraper": None, "allowedFreshness": None},
+    # "offerup": {
+    #     "logo": "offerup",
+    #     "url": "offerup.com", "scraper": None, "allowedFreshness": None},
+    # "wayfair": {"url": "www.wayfair.com", "scraper": None, "allowedFreshness": None},
     "amazon": {
+        "logo": "amazon",
         "url": "www.amazon.com",
         "scraper": amazon.scrape_w_soup,
         "allowedFreshness": None,
     },
-    "alibaba": {
-        "url": "www.alibaba.com/product-detail",
-        "scraper": None,
-        "allowedFreshness": None,
-    },
-    "facebook": {
-        "url": "www.facebook.com/marketplace",
-        "scraper": None,
-        "allowedFreshness": None,
-    },
-    "etsy": {"url": "www.etsy.com/listing", "scraper": None, "allowedFreshness": None},
-    "craigslist": {
-        "url": "miami.craigslist.org",
-        "scraper": None,
-        "allowedFreshness": None,
-    },
-    "mercari": {
-        "url": "www.mercari.com/us/item",
-        "scraper": None,
-        "allowedFreshness": None,
-    },
-    "temu": {"url": "www.temu.com", "scraper": None, "allowedFreshness": None},
-    "walmart": {"url": "www.walmart.com/ip", "scraper": None, "allowedFreshness": None},
-    "bestbuy": {
-        "url": "www.bestbuy.com/site",
-        "scraper": None,
-        "allowedFreshness": None,
-    },
-    "reverb": {"url": "reverb.com/item", "scraper": None, "allowedFreshness": None},
-    "ikea": {"url": "www.ikea.com", "scraper": None, "allowedFreshness": None},
-    "depot": {"url": "www.homedepot.com/p", "scraper": None, "allowedFreshness": None},
+    # "alibaba": {
+    #     "url": "www.alibaba.com/product-detail",
+    #     "scraper": None,
+    #     "allowedFreshness": None,
+    # },
+    # "facebook": {
+    #     "logo": "facebook marketplace",
+    #     "url": "www.facebook.com/marketplace",
+    #     "scraper": None,
+    #     "allowedFreshness": None,
+    # },
+    # "etsy": {"url": "www.etsy.com/listing", "scraper": None, "allowedFreshness": None},
+    # "craigslist": {
+    #     "url": "miami.craigslist.org",
+    #     "scraper": None,
+    #     "allowedFreshness": None,
+    # },
+    # "mercari": {
+    #     "url": "www.mercari.com/us/item",
+    #     "scraper": None,
+    #     "allowedFreshness": None,
+    # },
+    # "temu": {"url": "www.temu.com", "scraper": None, "allowedFreshness": None},
+    "walmart": {
+        "logo": "walmart",
+        "url": "www.walmart.com/ip", "scraper": walmart.scrape_w_soup, "allowedFreshness": None},
+    # "bestbuy": {
+    #     "url": "www.bestbuy.com/site",
+    #     "scraper": None,
+    #     "allowedFreshness": None,
+    # },
+    # "reverb": {"url": "reverb.com/item", "scraper": None, "allowedFreshness": None},
+    # "ikea": {"url": "www.ikea.com", "scraper": None, "allowedFreshness": None},
+    "depot": {
+        "logo": "homedepot",
+        "url": "www.homedepot.com/p", "scraper": homedepot.scrape_w_soup, "allowedFreshness": None},
 }
 
 
@@ -175,17 +198,28 @@ def search_and_scrape(site_data: ConstantSiteData, query: str) -> list[Product]:
 
     def _scrape(siteSearch: SiteSearch) -> Optional[Product]:
         cached_url, url, lastUpdated = siteSearch
-        req = session.get(url)
+        req = session.get(cached_url)
         if 400 <= req.status_code < 600:
             # The request it not ok
             return None
         product = site_data["scraper"](BeautifulSoup(req.text, "lxml"), cached_url)
         product["lastUpdatedAt"] = lastUpdated
         product["url"] = url
-        return product
+        product["logo"] = site_data["logo"]
+
+        if product["price"] == -1:
+            return None
+
+        for word in query.split(" "):
+            txt = word.lower()
+            if txt in product["name"] or txt in product["description"]:
+                return product
+        return None
 
     with ThreadPoolExecutor(max_workers=THREAD_POOL) as executor:
-        return [product for product in executor.map(_scrape, urls_to_scrape)]
+        return [product
+                for product in executor.map(_scrape, urls_to_scrape)
+                    if product != None]
 
 
 def images_search_all(files: list[FileStorage]) -> list[ImageProductSearch]:
@@ -199,81 +233,42 @@ def images_search_all(files: list[FileStorage]) -> list[ImageProductSearch]:
 
 
 def image_search_single(file: FileStorage) -> list[ImageProductSearch]:
-    files = {"image": file.stream}
-
-    query = {"mkt": "en-US"}
-
-    headers = {
-        "Ocp-Apim-Subscription-Key": BING_API_KEY,
-        "mkt": "en-US",
-        "safesearch": "moderate",
-    }
-
-    res = requests.post(
-        "https://api.bing.microsoft.com/v7.0/images/visualsearch",
-        headers=headers,
-        files=files,
-    )
+    file_obj = None
+    file_path = f"tmp/{file.name}{randint(1, 999)}.jpg"
+    file.save(file_path)
 
     try:
-        res.raise_for_status()
+        with open(file_path, "rb") as f:
+            file_obj = uploadcare.upload(f)
     except Exception as e:
-        logging.warning(f"An error occurred when searching for {query}")
-        return []
+        logging.warning("There was an error while uploading the image")
+        logging.error(e)
 
-    data: dict = None
-    try:
-        data = json.loads(res.text)
-    except Exception:
-        logging.warning("This shit aint json!")
-        return []
+    for i, (KEY, works) in enumerate(SERP_API_KEYS.items()):
+        try:
+            if not works: continue
 
-    tags = data.get("tags")
-    if not isinstance(tags, list):
-        logging.warning("Whoopsie daisy :(")
-        return []
+            serp_params = {
+                "api_key": KEY,
+                "engine": "google_lens",
+                "url": file_obj.cdn_url
+            }
 
-    if len(tags) == 0 :
-        logging.warning("Whoopsie daisy :(")
-        return []
+            search = GoogleSearch(serp_params)
+            results = search.get_dict()
 
-    tag = tags[0]
-    if tag ==None:
-        logging.warning("asjlfaldfaldsjflajf")
-        return []
+            visual_matches = results.get("visual_matches")
+            if not visual_matches:
+                logging.info(f"No visual matches for key #{i}")
+                continue
 
+            return [
+                {"text": m.get("title", None), "url": m.get("thumbnail", None)}
+                    for m in visual_matches
+                        if m != None
+            ]
+        except Exception:
+            SERP_API_KEYS[KEY] = False
 
-    actions = tag.get("actions", None)
-    if actions == None:
-        logging.warning("Whoopsie daisy :(")
-        return []
-
-    related: dict = None
-    for action in actions:
-        if action and action["actionType"] == "RelatedSearches":
-            related = action
-
-    if not related:
-        logging.warning("No related products!")
-        return []
-
-    related_data =related.get("data", None)
-    if not related_data:
-        logging.warning("No related products data!")
-        return []
-
-    related_values = related_data.get("value", None)
-    if not related_values:
-        logging.warning("ksdvfjk.fsdvjkfcskhfseduhkwsfechjk")
-        return []
-
-    if not isinstance(related_values, list):
-        logging.warning("adfjadfjlajfaldjfaldjf")
-        return []
-
-    return [
-        {
-            "text": d["text"],
-            "url": d["thumbnail"]["url"]
-        }
-        for d in related_values]
+    logging.warning("All the serp api keys failed!")
+    return []

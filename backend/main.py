@@ -1,4 +1,4 @@
-from tempfile import SpooledTemporaryFile
+import json
 
 from dotenv import load_dotenv
 
@@ -9,7 +9,7 @@ from flask import Flask, jsonify, request
 
 from search import images_search_all, text_search_all
 
-DEBUG = True
+DEBUG = False
 
 app = Flask(__name__)
 
@@ -22,14 +22,19 @@ def search():
 
 	products = text_search_all(query)
 	products = [serialize_product(p) for p in products if p != None]
-	names = [name for p in serialize_product if (name := p.get("name", None)) != None]
-	return jsonify({
-		# At least 30 percent of products must contain the string
-		"name": longest_common_substring(names, threshold=30),
+	names = [name for p in products if (name := p.get("name", None)) != None]
+	name =longest_common_substring(names, threshold=30)
+	res = {
+		"name": name if len(name) >= 5 else query,
 		"products": products
-	})
+	}
 
-@app.route("/images")
+	with open("res-search.json", "w") as f:
+		f.write(json.dumps(res))
+
+	return jsonify(res)
+
+@app.route("/images", methods=["POST"])
 def images():
 	# files = list(request.files.values())
 	# file = files[0]

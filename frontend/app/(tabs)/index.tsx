@@ -1,17 +1,26 @@
-import { router } from 'expo-router';
-import { Image, Keyboard, StyleSheet, TextInput, ScrollView, FlatList, TouchableWithoutFeedback } from 'react-native';
+import { router } from "expo-router";
+import {
+  Image,
+  Keyboard,
+  StyleSheet,
+  TextInput,
+  TouchableWithoutFeedback
+} from "react-native";
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
-import React, { useState } from 'react';
-import { SafeAreaView } from 'react-native';
+import { Text, View } from "@/components/Themed";
+import React, { useState } from "react";
+import { SafeAreaView } from "react-native";
 
 export default function HomeScreen() {
   const [searchText, setSearchText] = useState("");
 
   const handleSearchSubmit = () => {
     console.log(searchText);
-    router.navigate({pathname: "/products/[query]", params: {query: searchText}})
+    // router.navigate({pathname: "/photos"})
+    router.navigate({
+      pathname: "/products/[query]",
+      params: { query: searchText },
+    });
   };
 
   return (
@@ -46,17 +55,17 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
-    borderColor: 'gray',
+    backgroundColor: "white",
+    borderColor: "gray",
     borderWidth: 0,
     borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   titleContainer: {
     flex: 1,
-    backgroundColor: 'transparent',
-    borderColor: 'gray',
+    backgroundColor: "transparent",
+    borderColor: "gray",
     borderWidth: 0,
     borderRadius: 6,
     alignItems: 'center',
@@ -64,69 +73,69 @@ const styles = StyleSheet.create({
   },
   searchContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    display: 'flex',
-    width: '100%',
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    display: "flex",
+    width: "100%",
     paddingHorizontal: 25,
     marginTop: 0,
-    backgroundColor: 'transparent',
-    borderColor: 'black',
+    backgroundColor: "transparent",
+    borderColor: "black",
     borderWidth: 0,
   },
   titleText: {
     flex: 1,
-    fontFamily: 'Futura',
-    fontWeight: 'bold',
+    fontFamily: "Futura",
+    fontWeight: "bold",
     fontSize: 31,
-    textAlign: 'left',
-    color: 'black',
-    borderColor: 'black',
+    textAlign: "left",
+    color: "black",
+    borderColor: "black",
     borderWidth: 0,
     lineHeight: 35,
     paddingTop: 0,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   searchBar: {
     height: 40,
-    width: '100%',
-    alignSelf: 'center',
-    borderColor: 'gray',
+    width: "100%",
+    alignSelf: "center",
+    borderColor: "gray",
     borderWidth: 0,
     paddingHorizontal: 10,
     borderRadius: 25,
-    backgroundColor: '#E9E9E9',
+    backgroundColor: "#E9E9E9",
   },
   textbody: {
     fontSize: 10,
-    alignSelf: 'center',
-    fontFamily: 'SpaceMono-Regular',
-    fontWeight: 'normal',
+    alignSelf: "center",
+    fontFamily: "SpaceMono-Regular",
+    fontWeight: "normal",
     lineHeight: 17.5,
-    textAlign: 'center',
+    textAlign: "center",
     paddingHorizontal: 0,
     paddingBottom: 0,
     marginBottom: 0,
-    color: 'black',
-    borderColor: 'black',
+    color: "black",
+    borderColor: "black",
     borderWidth: 0,
   },
   creditsText: {
     fontSize: 11,
     lineHeight: 13,
-    textAlign: 'center',
-    color: 'gray',
-    backgroundColor: 'transparent',
-    borderColor: 'black',
+    textAlign: "center",
+    color: "gray",
+    backgroundColor: "transparent",
+    borderColor: "black",
     borderWidth: 0,
     paddingHorizontal: 15,
   },
   creditsContainer: {
     flex: 1,
-    backgroundColor: 'transparent',
-    justifyContent: 'flex-end',
+    backgroundColor: "transparent",
+    justifyContent: "flex-end",
     marginBottom: 6,
-    alignSelf: 'stretch',
-  }
+    alignSelf: "stretch",
+  },
 });

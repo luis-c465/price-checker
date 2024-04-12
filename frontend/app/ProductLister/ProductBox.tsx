@@ -10,6 +10,23 @@ import {
 } from "react-native";
 import StarRating from "./StarRating";
 
+type LogoKey = "ebay" | "amazon" | "homedepot" | "walmart" | "alibaba" | "bestbuy" | "craigslist" | "etsy" | "ikea" | "mercari" | "reverb" | "offerup" | "wayfair"
+const logoImages: Record<LogoKey, any> = {
+  "alibaba": require("../../assets/images/logos/Alibaba_logo.svg"),
+  "amazon": require("../../assets/images/logos/Amazon_logo.svg"),
+  "bestbuy": require("../../assets/images/logos/Best_Buy_Logo.svg"),
+  "craigslist": require("../../assets/images/logos/Craigslist.svg"),
+  "ebay": require("../../assets/images/logos/EBay_logo.svg"),
+  "etsy": require("../../assets/images/logos/Etsy_logo.svg"),
+  "ikea": require("../../assets/images/logos/Ikea_logo.svg"),
+  "mercari": require("../../assets/images/logos/Mercari_logo_2018.svg"),
+  "reverb": require("../../assets/images/logos/Reverb_logo.svg"),
+  "homedepot": require("../../assets/images/logos/TheHomeDepot.svg"),
+  "walmart": require("../../assets/images/logos/Walmart_logo.svg"),
+  "offerup": require("../../assets/images/logos/OfferUp_Logo.svg"),
+  "wayfair": require("../../assets/images/logos/Wayfair_logo.svg"),
+};
+
 export interface ProductData {
   price: number;
   shipping: number;
@@ -26,6 +43,7 @@ export interface ProductData {
   quantity: number;
   lastUpdatedAt: string;
   url: string;
+  logo: LogoKey
 }
 
 interface ProductBoxProps extends ProductData {
@@ -43,6 +61,7 @@ const ProductBox: React.FC<ProductBoxProps> = ({
   num_ratings,
   photos,
   url,
+  logo
 }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -52,6 +71,8 @@ const ProductBox: React.FC<ProductBoxProps> = ({
       console.error("Failed to open URL: ", err)
     );
   };
+
+  const LogoImage = logoImages[logo] || null;
 
   return (
     <View style={styles.productBox}>
@@ -76,15 +97,13 @@ const ProductBox: React.FC<ProductBoxProps> = ({
       </View>
       <View style={styles.starOverlay}>
         <StarRating rating={rating} />
-        <TouchableOpacity onPress={handleRedirect} style={styles.redirectBox}>
-          <Text style={styles.redirectText}>Redirect</Text>
+        <TouchableOpacity onPress={handleRedirect}>
+          {LogoImage && <Image source={LogoImage} resizeMode="contain" />}
         </TouchableOpacity>
-        {/* Display number of ratings */}
         <View style={styles.ratingCounter}>
           <Text style={styles.ratingCounterText}>{num_ratings}</Text>
         </View>
       </View>
-      {/* Modal for full description */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -103,8 +122,6 @@ const ProductBox: React.FC<ProductBoxProps> = ({
           </View>
         </View>
       </Modal>
-      {/* Popup window for image */}
-
       <Modal
         animationType="fade"
         transparent={true}
@@ -134,7 +151,7 @@ const ProductBox: React.FC<ProductBoxProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   productBox: {
     borderRadius: 20,
     padding: 10,
@@ -242,13 +259,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 30,
     left: 35,
-    backgroundColor: "#2196f3", // Adjusted blue color for redirect box
+    paddingHorizontal: 5,
     paddingVertical: 5,
-    paddingHorizontal: 10,
     borderRadius: 5,
   },
-  redirectText: {
-    color: "#ffffff", // White text color for redirect text
+  redirectLogo: {
+    width: 50, // Set the width of the logo
+    height: 50, // Set the height of the logo
   },
   imagePopupBackground: {
     flex: 1,
