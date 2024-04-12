@@ -6,26 +6,14 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  ImageBackground,
 } from "react-native";
 import StarRating from "./StarRating";
 
-type LogoKey = "ebay" | "amazon" | "homedepot" | "walmart" | "alibaba" | "bestbuy" | "craigslist" | "etsy" | "ikea" | "mercari" | "reverb" | "offerup" | "wayfair"
-const logoImages: Record<LogoKey, any> = {
-  "alibaba": require("../../assets/images/logos/Alibaba_logo.svg"),
-  "amazon": require("../../assets/images/logos/Amazon_logo.svg"),
-  "bestbuy": require("../../assets/images/logos/Best_Buy_Logo.svg"),
-  "craigslist": require("../../assets/images/logos/Craigslist.svg"),
-  "ebay": require("../../assets/images/logos/EBay_logo.svg"),
-  "etsy": require("../../assets/images/logos/Etsy_logo.svg"),
-  "ikea": require("../../assets/images/logos/Ikea_logo.svg"),
-  "mercari": require("../../assets/images/logos/Mercari_logo_2018.svg"),
-  "reverb": require("../../assets/images/logos/Reverb_logo.svg"),
-  "homedepot": require("../../assets/images/logos/TheHomeDepot.svg"),
-  "walmart": require("../../assets/images/logos/Walmart_logo.svg"),
-  "offerup": require("../../assets/images/logos/OfferUp_Logo.svg"),
-  "wayfair": require("../../assets/images/logos/Wayfair_logo.svg"),
-};
+interface LogoImages {
+  [key: string]: any;
+}
 
 export interface ProductData {
   price: number;
@@ -43,7 +31,7 @@ export interface ProductData {
   quantity: number;
   lastUpdatedAt: string;
   url: string;
-  logo: LogoKey
+  logo: string;
 }
 
 interface ProductBoxProps extends ProductData {
@@ -61,7 +49,7 @@ const ProductBox: React.FC<ProductBoxProps> = ({
   num_ratings,
   photos,
   url,
-  logo
+  logo,
 }) => {
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -71,8 +59,6 @@ const ProductBox: React.FC<ProductBoxProps> = ({
       console.error("Failed to open URL: ", err)
     );
   };
-
-  const LogoImage = logoImages[logo] || null;
 
   return (
     <View style={styles.productBox}>
@@ -97,13 +83,16 @@ const ProductBox: React.FC<ProductBoxProps> = ({
       </View>
       <View style={styles.starOverlay}>
         <StarRating rating={rating} />
-        <TouchableOpacity onPress={handleRedirect}>
-          {LogoImage && <Image source={LogoImage} resizeMode="contain" />}
-        </TouchableOpacity>
         <View style={styles.ratingCounter}>
           <Text style={styles.ratingCounterText}>{num_ratings}</Text>
         </View>
+        <View style={styles.redirectBox}>
+          <TouchableOpacity onPress={handleRedirect}>
+            <Text style={styles.redirectTextDefault}>{logo}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+
       <Modal
         animationType="slide"
         transparent={true}
@@ -257,15 +246,40 @@ export const styles = StyleSheet.create({
   },
   redirectBox: {
     position: "absolute",
-    bottom: 30,
-    left: 35,
-    paddingHorizontal: 5,
-    paddingVertical: 5,
-    borderRadius: 5,
+    bottom: 10,
+    right: -10,
+    width: 90, // Adjust width to make the box smaller
+    height: 40, // Adjust height to make the box smaller
+    justifyContent: "center",
+    alignItems: "center",
   },
-  redirectLogo: {
-    width: 50, // Set the width of the logo
-    height: 50, // Set the height of the logo
+  redirectTextAlibaba: {
+    color: "#FFFFFF", // White text color for Alibaba logo
+    fontWeight: "bold",
+  },
+  redirectTextAmazon: {
+    color: "#FF9900", // Orange text color for Amazon logo
+    fontWeight: "bold",
+  },
+  redirectTextDefault: {
+    color: "#000000", // Green text color for other logos
+    fontWeight: "bold",
+  },
+  redirectTextBestBuy: {
+    color: "yellow;", // Green text color for other logos
+    fontWeight: "bold",
+  },
+  redirectTextHomeDepot: {
+    color: "orange", // Green text color for other logos
+    fontWeight: "bold",
+  },
+  redirectTextWalmart: {
+    color: "#0071ce", // Green text color for other logos
+    fontWeight: "bold",
+  },
+  redirectTextEbay: {
+    color: "#E53238", // Green text color for other logos
+    fontWeight: "bold",
   },
   imagePopupBackground: {
     flex: 1,

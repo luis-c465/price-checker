@@ -549,7 +549,7 @@ export const defaultProductsData: ProductData[] = [
     lastUpdatedAt: "2021-10-10",
     url: "https://www.alibaba.com/",
     isNew: true,
-    "logo": "alibaba"
+    logo: "alibaba.com",
   },
   {
     price: 500,
@@ -567,7 +567,7 @@ export const defaultProductsData: ProductData[] = [
     lastUpdatedAt: "2021-10-10",
     url: "https://www.amazon.com/",
     isNew: false,
-    // logo: "amazon"
+    logo: "amazon.com",
   },
   {
     price: 200,
@@ -585,7 +585,7 @@ export const defaultProductsData: ProductData[] = [
     lastUpdatedAt: "2021-10-10",
     url: "https://www.bestbuy.com/",
     isNew: true,
-    // logo: "bestbuy"
+    logo: "bestbuy.com",
   },
   {
     price: 1500,
@@ -603,7 +603,7 @@ export const defaultProductsData: ProductData[] = [
     lastUpdatedAt: "2021-10-10",
     url: "https://www.craigslist.org/",
     isNew: false,
-    // logo: "craigslist"
+    logo: "craigslist",
   },
   {
     price: 300,
@@ -621,7 +621,7 @@ export const defaultProductsData: ProductData[] = [
     lastUpdatedAt: "2021-10-10",
     url: "https://www.ebay.com/",
     isNew: true,
-    // logo: "ebay"
+    logo: "ebay.com",
   },
   {
     price: 400,
@@ -639,7 +639,7 @@ export const defaultProductsData: ProductData[] = [
     lastUpdatedAt: "2021-10-10",
     url: "https://www.etsy.com/",
     isNew: false,
-    // logo: "etsy"
+    logo: "etsy",
   },
   // Add the rest of the products here...
 ];
