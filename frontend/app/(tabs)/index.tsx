@@ -25,40 +25,30 @@ export default function HomeScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.titleContainer}></View>
-        <View style={styles.searchContainer}>
-          <Image
-            style={{ width: 200, height: 100 }} // Adjust the dimensions as needed
-            source={require("../../assets/images/TradeHubLogoProj.png")} // Replace with the path to your image
-          />
-          <Text style={styles.textbody}>
-            Enter a product or snap a picture to find the best price!
-          </Text>
-          <TextInput
-            style={{
-              ...styles.searchBar,
-              color: "black",
-              fontFamily: "Helvetica",
-              fontSize: 14,
-              fontWeight: "normal",
-            }}
-            placeholder="Search..."
-            placeholderTextColor="gray"
-            onChangeText={(text) => setSearchText(text)}
-            onSubmitEditing={handleSearchSubmit}
-          />
-          <Text style={styles.titleText}></Text>
-        </View>
-        <View style={styles.creditsContainer}>
-          <Text style={styles.creditsText}>
-            Developed by Luis Canada, Marcos Carillo, Jaime Diaz, Xavier
-            Williams, Salvador Frias, Dwene Louis, and Enrique Dominguez
-          </Text>
-        </View>
-      </SafeAreaView>
+    <SafeAreaView style={styles.container}>
+    <View style={{ flex: 1, justifyContent: 'flex-start', backgroundColor: 'transparent' }}>
+    <Image
+      style={{ width: 350, height: 350, left: -13}}
+      source={require("../../assets/images/TradeHubLogoV3.png")}
+    />
+  </View>
+      <View style={styles.titleContainer}></View>
+          <View style={styles.searchContainer}>
+            <Text style={styles.textbody}>Enter a product or snap a picture to find the best price!</Text>
+            <TextInput
+              style={{...styles.searchBar, color: 'black', fontFamily: 'Helvetica', fontSize: 14, fontWeight: 'normal'}}
+              placeholder="Search..."
+              placeholderTextColor="gray"
+              onChangeText={text => setSearchText(text)}
+              onSubmitEditing={handleSearchSubmit}
+            />
+            <Text style={styles.titleText}></Text>
+          </View>
+          <View style={styles.creditsContainer}>
+            <Text style={styles.creditsText}>Developed by Luis Canada, Marcos Carillo, Jaime Diaz, Xavier Williams, Salvador Frias, Dwene Louis, and Enrique Dominguez</Text>
+          </View>
+    </SafeAreaView>
     </TouchableWithoutFeedback>
-    // <Text style={styles.titleText}> Trade Hub</Text>
   );
 }
 
@@ -78,6 +68,8 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     borderWidth: 0,
     borderRadius: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   searchContainer: {
     flex: 1,
