@@ -28,12 +28,13 @@ assert UPLOAD_CARE_PUBLIC_KEY != None, "Upload care public key not found!"
 
 uploadcare = Uploadcare(public_key=UPLOAD_CARE_PUBLIC_KEY, secret_key="YOUR_SECRET_KEY")
 
-THREAD_POOL = 16
+THREAD_POOL = 32
 session = requests.Session()
 session.mount(
     "https://",
     requests.adapters.HTTPAdapter(
-        pool_maxsize=THREAD_POOL, max_retries=2, pool_block=True
+        pool_maxsize=THREAD_POOL, max_retries=2, pool_block=True,
+        pool_connections=25,
     ),
 )
 
