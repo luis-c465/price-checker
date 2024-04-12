@@ -4,11 +4,11 @@
     "slug": "price-checker",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/TradeHubLogoProj.png",
+    "icon": "./assets/images/TradeHubLogoV3.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/images/TradeHubLogoProj.png",
+      "image": "./assets/images/TradeHubLogoV3.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -20,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/TradeHubLogoProj.png",
+        "foregroundImage": "./assets/images/TradeHubLogoV3.png",
         "backgroundColor": "#ffffff"
       }
     },
